@@ -245,7 +245,9 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='')
       data[[i]]$E4 + data[[i]]$E5 + data[[i]]$E6
   
   max.time<-data[[1]]$cum.time[max(which(data[[1]]$I>0))] #maximum time in first simulation
-  max.y<-max(data[[1]]$C)       #find max total confirmed cases for plotting range
+  # max.y<-max(data[[1]]$C)       #find max total confirmed cases for plotting range
+  # Changing this to max of C, I + Iu, or E to expand y range and capture all information
+  max.y <- max(c(max(data[[1]]$C), max(data[[1]]$I + data[[1]]$Iu), max(data[[1]]$E)))
   
   # calculate means
   m1 <- m2 <- m3 <- m4 <- m5 <- matrix(nrow=length(data[[1]]$I), ncol=nsims)
