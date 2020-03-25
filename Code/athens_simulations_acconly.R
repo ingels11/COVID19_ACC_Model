@@ -5,13 +5,10 @@ library(ggplot2)
 ### Read and Format Athens Cases Data ------------------------------------------
 acc_df <- read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 
-# Primary service area
-# Clarke, Oconee, Jackson, Madison, Oglethorpe, Barrow
-# Not sure if Barrow actually counts
-# Jackson and Oglethorpe not in dataset
+# ACC only
+# Clarke
 acc_df[is.na(acc_df)] <- 0
-acc_df$primary <- acc_df$Clarke + acc_df$Oconee + acc_df$Barrow + acc_df$Madison
-acc_df$primary_cum <- cumsum(acc_df$primary)
+acc_df$Clarke_cum <- cumsum(acc_df$Clarke)
 
 names(acc_df)[1] <- "Date"
 acc_df$Date <- as.character(acc_df$Date)
@@ -21,19 +18,19 @@ acc_df$Date <- as.Date(stringr::str_replace_all(acc_df$Date, "-", "/"),
 acc_df <- acc_df[1:which(acc_df$Date == as.Date("3/23/20", format = "%m/%d/%y")), ]
 
 
-# Plot of daily Athens cases
-ggplot(data = acc_df, mapping = aes(x = Date, y = primary)) +
+# Plot of daily Athens only cases
+ggplot(data = acc_df, mapping = aes(x = Date, y = Clarke)) +
   geom_bar(stat = "identity") +
   labs(x = "Day",
-       y = "New Cases (Primary Service Area)") +
+       y = "New Cases (ACC only)") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # Plot of cumulative Athens cases
-ggplot(data = acc_df, mapping = aes(x = Date, y = primary_cum)) +
+ggplot(data = acc_df, mapping = aes(x = Date, y = Clarke_cum)) +
   geom_bar(stat = "identity") +
   labs(x = "Day",
-       y = "Cumulative Cases (Primary Service Area)") +
+       y = "Cumulative Cases (ACC only)") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -56,6 +53,8 @@ scenarios <- scenarios[c(1:8, 15), ]
 # move columns 11 and 12 to the end
 scenarios <- scenarios[, c(1:10, 13:31, 11, 12)]
 
+### NOTE: Stopping here, need to update starting values in athens_only_scenarios.csv
+
 ### Natural Epidemic (Scenario 6) ----------------------------------------------
 # ACC-area cases began on 3/14/20
 # Major intervention 3/20/20 with shelter in place, etc. from government
@@ -63,7 +62,8 @@ scenarios <- scenarios[, c(1:10, 13:31, 11, 12)]
 scen_row <- 6
 
 # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
-gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
+gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], 
+                  a0=scenarios[scen_row, "a0"], t) {
   # piecewise function
   # default parameters z = 12, b=1/7, a0=1/1.5
   #    z: time at start of intervention (notionally March 12)

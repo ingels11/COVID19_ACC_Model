@@ -5,12 +5,17 @@ library(ggplot2)
 ### Read and Format Athens Cases Data ------------------------------------------
 acc_df <- read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 
-# Primary service area
-# Clarke, Oconee, Jackson, Madison, Oglethorpe, Barrow
-# Not sure if Barrow actually counts
-# Jackson and Oglethorpe not in dataset
+# Secondary service area
+# Athens-Clarke, Oconee, Oglethorpe, Madison, Jackson, Barrow, Walton, 
+# Morgan, Greene, Taliaferro, Wilkes, Elbert, Hart, Franklin, Banks, 
+# Stephens and Habersham
 acc_df[is.na(acc_df)] <- 0
-acc_df$primary <- acc_df$Clarke + acc_df$Oconee + acc_df$Barrow + acc_df$Madison
+acc_df$secondary <- acc_df$Clarke + acc_df$Oconee + acc_df$Barrow + acc_df$Madison +
+  acc_df$Morgan
+# NOTE:
+# I only see Morgan county in the secondary service area 
+# Going to stop here for the moment and return to this if more data exists on 
+# those counties
 acc_df$primary_cum <- cumsum(acc_df$primary)
 
 names(acc_df)[1] <- "Date"
@@ -83,6 +88,15 @@ beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "bet
 # First ACC-area case on 3/14/20
 start = as.Date("2020-03-14")
 
+
+# ei <- 13
+# ii <- 14
+# 
+# out6 <- evaluate.model(params=list(beta0=0.6584, sigma=1/6.4, z=1200, b=0.143, a0=1/1.5, w=100, presymptomatic=1, c=1, dt=0.05),
+#                        init = list(S=447451, E1=ei, E2=ei, E3=ei, E4=ei, E5=ei, E6=ei,
+#                                    I1 = ii, I2 = ii, I3 = ii, I4 = ii, Iu1=0, Iu2=0, Iu3=0, Iu4=0,
+#                                    H=0, Ru=0, C=0),
+#                        nsims=15, nstep=NULL, start=start)
 s <- scenarios[,3:31]
 i <- scen_row
 out6 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
@@ -92,8 +106,7 @@ out6 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 
-plot.model.acc(out6, acc_df$Date, acc_df$primary, 
-               log='y', title='Benchmark: Natural epidemic')
+plot.model.acc(out6, log='y', title='Benchmark: Natural epidemic')
 
 
 ### Baseline Model (Scenario 7) ------------------------------------------------
@@ -132,8 +145,7 @@ out7 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 
-plot.model.acc(out7,acc_df$Date, acc_df$primary,  
-               log='y', title='Benchmark: Baseline')
+plot.model.acc(out7, log='y', title='Benchmark: Baseline')
 
 ### Social Distancing Intervention (Scenario 8) --------------------------------
 scen_row <- 8
@@ -164,8 +176,7 @@ out8 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out8, acc_df$Date, acc_df$primary, 
-               log='y', title='With Social Distancing')
+plot.model.acc(out8, log='y', title='With Social Distancing')
 
 
 ### Smaller and Larger Starting Sizes (Scenarios 3 and 5) ----------------------
@@ -199,8 +210,7 @@ out3 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out3, acc_df$Date, acc_df$primary, 
-               log='y', title='With Social Distancing (Lower Bound)')
+plot.model.acc(out3, log='y', title='With Social Distancing (Lower Bound)')
 # Doesn't work at all, too small of a starting size
 
 # Bigger next
@@ -233,8 +243,7 @@ out5 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out5, acc_df$Date, acc_df$primary, 
-               log='y', title='With Social Distancing (Upper Bound)')
+plot.model.acc(out5, log='y', title='With Social Distancing (Upper Bound)')
 # No presymptomatic here, that seems to make a difference, doesn't behave well
 # Adding presymptomatic == 1, seems to make sense, creates a definite upper bound
 # in cumulative reported cases
@@ -269,6 +278,5 @@ out15 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out15, acc_df$Date, acc_df$primary,
-               log='y', title='Both early interventions')
+plot.model.acc(out15, log='y', title='Both early interventions')
 # Not sure this makes sense.

@@ -231,7 +231,7 @@ plot.model <- function(data, log='y', title=''){
                   'Cumulative reported cases (Model)', 'Cumulative reported cases (Data)'))
 }
 
-plot.model.acc <- function(data, log='y', title=''){
+plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title=''){
   # The function `plot.model` provides automated visualization of model simulations
   # ACC specific in terms of real data
   # process data
@@ -283,8 +283,8 @@ plot.model.acc <- function(data, log='y', title=''){
   # day <- georgia$date - start
   # lines(day, cumsum(georgia$cases), type='h', col=col.cases, lwd=3, lend='butt' )
   # Switch to ACC real data (acc_df)
-  day <- acc_df$Date - start
-  lines(day, cumsum(acc_df$primary), type = 'h', col = col.cases, 
+  day <- accdata.date - start
+  lines(day, cumsum(accdata.cases), type = 'h', col = col.cases, 
         lwd = 3, lend = 'butt')
   
   # plot spaghetti
