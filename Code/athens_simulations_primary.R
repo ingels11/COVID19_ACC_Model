@@ -1,3 +1,12 @@
+### ----------------------------------------------------------------------------
+### This is the set of simulations related to the Athens-Clarke county primary
+### service area.
+### Counties are limited to Clarke, Oconee, Barrow, Madison, Jackson, Oglethorpe
+### Georgia-specific simulations have been updated with starting values based
+### on what has been seen in the ACC area. This also includes the start date
+### of the epidemic for this area and the date of intervention, selected to be
+### the shelter in home order from the ACC government.
+### ----------------------------------------------------------------------------
 rm(list = ls())
 source("Code/model_fncs.R")
 library(ggplot2)
@@ -165,7 +174,7 @@ out8 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 plot.model.acc(out8, acc_df$Date, acc_df$primary, 
-               log='y', title='With Social Distancing')
+               log='y', title='Athens Primary Service Area with Social Distancing Intervention')
 
 
 ### Smaller and Larger Starting Sizes (Scenarios 3 and 5) ----------------------
@@ -200,8 +209,8 @@ out3 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 plot.model.acc(out3, acc_df$Date, acc_df$primary, 
-               log='y', title='With Social Distancing (Lower Bound)')
-# Doesn't work at all, too small of a starting size
+               log='y', title='Athens Primary Service Area with Social Distancing Intervention (lower bound)')
+
 
 # Bigger next
 scen_row <- 5
@@ -234,7 +243,7 @@ out5 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 plot.model.acc(out5, acc_df$Date, acc_df$primary, 
-               log='y', title='With Social Distancing (Upper Bound)')
+               log='y', title='Athens Primary Service Area with Social Distancing Intervention (upper bound)')
 # No presymptomatic here, that seems to make a difference, doesn't behave well
 # Adding presymptomatic == 1, seems to make sense, creates a definite upper bound
 # in cumulative reported cases

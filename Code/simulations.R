@@ -1,3 +1,9 @@
+### ----------------------------------------------------------------------------
+# This is the initial Georgia-specific file created to ensure we could
+# reproduce what Handel and Drake were reporting for Georgia. Once everything
+# seemed good, the functions used for the simulation here have been updated
+# for the Athens area. 
+### ----------------------------------------------------------------------------
 rm(list = ls())
 source("Code/model_fncs.R")
 # Simulations that are included on
