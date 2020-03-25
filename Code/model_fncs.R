@@ -105,6 +105,7 @@ onestep <- function (x, params) {
 # Called by the function evaluate.model()
 model <- function (x, params, nstep) {  #function to simulate stochastic SIR
   output <- array(dim=c(nstep+1,length(x)))         #set up array to store results
+
   colnames(output) <- c("time","S",
                         "E1", "E2", "E3", "E4", "E5", "E6",
                         "I1", "I2", "I3", "I4", "Iu1", "Iu2", "Iu3", "Iu4",
@@ -124,7 +125,7 @@ evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143,
                                        I1 = 1, I2= 0, I3=0, I4=0, Iu1=0, Iu2=0, Iu3=0, Iu4=0,
                                        H=0, Ru=0, C=0),
                            nsims=2, nstep=NULL, start=as.Date("2020-03-01"),today=Sys.Date()){
-  
+
   if(is.null(nstep)) nstep <- (as.numeric(today-start)+1+28)/params$dt #run simulation from start to current time plus four weeks
   
   xstart <- c(time=0, unlist(init), cum.time = 0) #initial conditions
@@ -229,6 +230,98 @@ plot.model <- function(data, log='y', title=''){
          legend=c('Latent cases in the community', 'Infectious cases in the community', 'Isolated', 
                   'Cumulative reported cases (Model)', 'Cumulative reported cases (Data)'))
 }
+
+plot.model.acc <- function(data, log='y', title=''){
+  # The function `plot.model` provides automated visualization of model simulations
+  # ACC specific in terms of real data
+  # process data
+  nsims <- length(data)
+  
+  for(i in 1:nsims) data[[i]]$I <- data[[i]]$I1 + data[[i]]$I2 + data[[i]]$I3 +
+      data[[i]]$I4
+  for(i in 1:nsims) data[[i]]$Iu <- data[[i]]$Iu1 + data[[i]]$Iu2 + data[[i]]$Iu3 +
+      data[[i]]$Iu4
+  for(i in 1:nsims) data[[i]]$E <- data[[i]]$E1 + data[[i]]$E2 + data[[i]]$E3 +
+      data[[i]]$E4 + data[[i]]$E5 + data[[i]]$E6
+  
+  max.time<-data[[1]]$cum.time[max(which(data[[1]]$I>0))] #maximum time in first simulation
+  max.y<-max(data[[1]]$C)       #find max total confirmed cases for plotting range
+  
+  # calculate means
+  m1 <- m2 <- m3 <- m4 <- m5 <- matrix(nrow=length(data[[1]]$I), ncol=nsims)
+  for(i in 1:nsims){
+    m1[,i] <- data[[i]]$E
+    m2[,i] <- data[[i]]$I+data[[i]]$Iu
+    # m3[,i] <- data[[i]]$Iu
+    m4[,i] <- data[[i]]$H
+    m5[,i] <- data[[i]]$C
+  }
+  E.mean <- rowMeans(m1)
+  I.mean <- rowMeans(m2)
+  # Iu.mean <- rowMeans(m3)
+  H.mean <- rowMeans(m4)
+  C.mean <- rowMeans(m5)
+  
+  # colors
+  col.E.ci <- rgb(0,1,0,.25)
+  col.I.ci <- rgb(1,0,0,.25)
+  Iu.col <- rgb(0.5, 0.5, 0, 0.25)
+  col.nowcast.ci <- rgb(0,0,1,.25)
+  col.cases.ci <- rgb(0,0,0,.25)
+  col.E <- rgb(0,1,0,1)
+  col.I <- rgb(1,0,0,1)
+  Iu.mean.col <- rgb(0.5,0.5,0,1)
+  col.nowcast <- rgb(0,0,1,1)
+  col.cases <- rgb(0,0,0,1)
+  
+  #set up plot
+  plot(I~cum.time,data=data[[1]],xlab='',ylab='Cases',col=1,
+       xlim=c(0,max.time),ylim=c(1,max.y), type='n', lty=1, log=log,
+       axes=FALSE, main=title, cex.main=0.8) # set up plot
+  
+  # add data to plot
+  # day <- georgia$date - start
+  # lines(day, cumsum(georgia$cases), type='h', col=col.cases, lwd=3, lend='butt' )
+  # Switch to ACC real data (acc_df)
+  day <- acc_df$Date - start
+  lines(day, cumsum(acc_df$primary), type = 'h', col = col.cases, 
+        lwd = 3, lend = 'butt')
+  
+  # plot spaghetti
+  lines(E~cum.time,data=data[[1]], col=col.E.ci, lty=1)
+  lines(I+Iu~cum.time,data=data[[1]], col=col.I.ci, lty=1)
+  # lines(Iu~cum.time,data=data[[1]], col=Iu.col, lty=1)
+  lines(H~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
+  lines(C~cum.time,data=data[[1]], col=col.cases.ci, lty=1, lwd=1)
+  
+  
+  axis(1, at=seq(0,max.time,5), labels=format(start+seq(0,max.time,5), format= '%b %d'))
+  axis(2)
+  box()
+  
+  if(nsims > 1){
+    for (k in 2:min(100,nsims)) {              #add multiple epidemics to plot
+      lines(E~cum.time, data=data[[k]], col=col.E.ci, type='l', lty=1)
+      lines(I+Iu~cum.time, data=data[[k]], col=col.I.ci, type='l', lty=1)
+      #   lines(Iu~cum.time, data=data[[k]], col=Iu.col, type='l', lty=1)
+      lines(H~cum.time, data=data[[k]], col=col.nowcast.ci, type='l', lty=1)
+      lines(C~cum.time, data=data[[k]], col=col.cases.ci, type='l', lty=1, lwd=1)
+    }
+    
+    # plot means
+    lines(E.mean~cum.time, data=data[[k]], col=col.E, lty=1)
+    lines(I.mean~cum.time, data=data[[k]], col=col.I, lty=1)  
+    #  lines(Iu.mean~cum.time, data=data[[k]], col=Iu.mean.col, lty=1)
+    lines(H.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)
+    lines(C.mean~cum.time, data=data[[k]], col=col.cases, lty=1)
+  } 
+  
+  legend('topleft', lty=c(1,1,1,1,1,1), lwd=c(1,1,1,1,3,3), bty='n', cex=0.75,
+         col=c(col.E, col.I, col.nowcast, col.cases, 'black'),
+         legend=c('Latent cases in the community', 'Infectious cases in the community', 'Isolated', 
+                  'Cumulative reported cases (Model)', 'Cumulative reported cases (Data)'))
+}
+
 
 gamma <- function(z = 12, b=0.143, a0=1/1.5, t){
   # piecewise function
