@@ -32,3 +32,4 @@ for (i in 1:nrow(countyCasesDaily)){
       countyCasesDaily[countyCasesDaily$County == as.character(countyCasesDaily$County)[i], 2]
   }
 }
+
