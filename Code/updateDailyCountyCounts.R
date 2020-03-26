@@ -1,6 +1,6 @@
 
 library(rvest)
-
+install.packages("lubridate")
 
 dailyCountWebsite <- read_html("https://dph.georgia.gov/covid-19-daily-status-report")
 
@@ -14,11 +14,13 @@ tbls_ls <- dailyCountWebsite %>%
 
 countyCasesDaily = as.data.frame(tbls_ls)
 
-countyCasesDaily$date = Sys.Date()
+countyCasesDaily$date = ymd(Sys.Date())
 
 countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
-names(countsToBeUpdated)[1] <- "date"
-countsToBeUpdated$date <- as.Date(as.character(countsToBeUpdated$date), format = "%m/%d/%y")
+
+countsToBeUpdated$date = lubridate::ymd(countsToBeUpdated$date)
+
+
 
 
 
