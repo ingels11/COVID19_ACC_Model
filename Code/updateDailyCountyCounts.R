@@ -15,9 +15,9 @@ countyCasesDaily = as.data.frame(tbls_ls)
 
 countyCasesDaily$date = Sys.Date()
 
-gaCounties = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
-names(gaCounties)[1] <- "date"
-gaCounties$date <- as.Date(as.character(gaCounties$date), format = "%m/%d/%y")
+countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
+names(countsToBeUpdated)[1] <- "date"
+countsToBeUpdated$date <- as.Date(as.character(countsToBeUpdated$date), format = "%m/%d/%y")
 
 
 
@@ -26,9 +26,9 @@ library(tidyr)
 library(plyr)
 
 for (i in 1:nrow(countyCasesDaily)){
-  if (countyCasesDaily$County[i] %in%(names(gaCounties))){
+  if (countyCasesDaily$County[i] %in%(names(countsToBeUpdated))){
     
-    gaCounties[gaCounties$date == Sys.Date(), as.character(countyCasesDaily$County)[i]] = 
+    countsToBeUpdated[countsToBeUpdated$date == Sys.Date(), as.character(countyCasesDaily$County)[i]] = 
       countyCasesDaily[countyCasesDaily$County == as.character(countyCasesDaily$County)[i], 2]
   }
 }
