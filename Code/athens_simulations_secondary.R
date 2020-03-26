@@ -55,9 +55,9 @@ ggplot(data = acc_df, mapping = aes(x = Date, y = primary_cum)) +
 #     * not using GA scaling, step back one day and go with intermediate method
 #     *   then 9 early cases / 0.11 = 82
 
-scenarios <- read.csv("Data/athens_scenarios.csv")
+scenarios <- read.csv("Data/athens secondary scenarios ga scaling.csv")
 # Only the first 8 are currently setup
-scenarios <- scenarios[c(1:8, 15), ]
+scenarios <- scenarios[c(1:8), ]
 # move columns 11 and 12 to the end
 scenarios <- scenarios[, c(1:10, 13:31, 11, 12)]
 
@@ -106,7 +106,7 @@ out6 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 
-plot.model.acc(out6, log='y', title='Benchmark: Natural epidemic')
+plot.model(out6, log='y', title='Benchmark: Natural epidemic')
 
 
 ### Baseline Model (Scenario 7) ------------------------------------------------
@@ -145,7 +145,7 @@ out7 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 
-plot.model.acc(out7, log='y', title='Benchmark: Baseline')
+plot.model(out7, log='y', title='Benchmark: Baseline')
 
 ### Social Distancing Intervention (Scenario 8) --------------------------------
 scen_row <- 8
@@ -210,7 +210,7 @@ out3 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out3, log='y', title='With Social Distancing (Lower Bound)')
+plot.model(out3, log='y', title='With Social Distancing (Lower Bound)')
 # Doesn't work at all, too small of a starting size
 
 # Bigger next
@@ -243,7 +243,7 @@ out5 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out5, log='y', title='With Social Distancing (Upper Bound)')
+plot.model(out5, log='y', title='With Social Distancing (Upper Bound)')
 # No presymptomatic here, that seems to make a difference, doesn't behave well
 # Adding presymptomatic == 1, seems to make sense, creates a definite upper bound
 # in cumulative reported cases
