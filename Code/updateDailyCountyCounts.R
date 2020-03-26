@@ -36,6 +36,6 @@ for (i in 1:nrow(countyCasesDaily)){
 }
 
 
-# write.csv(countsToBeUpdated, "Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
+write.csv(countsToBeUpdated, "Data/ACC Healthcare Region Simulation  - Case Counts by County GA2.csv", row.names = F)
 
 
