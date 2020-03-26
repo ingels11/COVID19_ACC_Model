@@ -1,12 +1,13 @@
 
 library(rvest)
 
-webpage <- read_html("https://dph.georgia.gov/covid-19-daily-status-report")
 
-tbls <- html_nodes(webpage, "table")
+dailyCountWebsite <- read_html("https://dph.georgia.gov/covid-19-daily-status-report")
+
+tbls <- html_nodes(dailyCountWebsite, "table")
 
 head(tbls)
-tbls_ls <- webpage %>%
+tbls_ls <- dailyCountWebsite %>%
   html_nodes("table") %>%
   .[3] %>%
   html_table(fill = TRUE)
