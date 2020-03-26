@@ -17,7 +17,7 @@ countyCasesDaily = as.data.frame(tbls_ls)
 countyCasesDaily$date = ymd(Sys.Date())
 
 countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
-
+countsToBeUpdated[is.na(countsToBeUpdated)] <- 0
 countsToBeUpdated$date = lubridate::ymd(countsToBeUpdated$date)
 
 
