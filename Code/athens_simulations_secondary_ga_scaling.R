@@ -109,7 +109,12 @@ ggplot(data = dailyCases2, mapping = aes(x = date, y = secondary_cum)) +
 #     *   then 9 early cases / 0.11 = 82
 
 scenarios <- read.csv("Data/athens secondary scenarios ga scaling.csv")
-scenarios[8, 15:24] = scenarios[7, 15:24]
+
+scenarios[8, 15:24] = scenarios[7, 15:24] # forgot to update the E's and I's for social distancing 
+                                          # This code takes those values from the baseline 
+                                          # with no intervention (row 7) since we are supposed 
+                                          # to have the same number of starting cases (55)
+                                          # and NOT!! 82 like it says in the actual scenario datasheet.
 
 # Only the first 8 are currently setup
 scenarios <- scenarios[c(1:8), ]
@@ -245,7 +250,7 @@ for (i in 1:15){
   estCountRaw[i] = c((outBaselineInt[[i]]$C[841]))
 }
 
-
+mean(estCountRaw)
 
 finalEstCountSD = NULL
 for (i in 1:15){
