@@ -120,8 +120,8 @@ model <- function (x, params, nstep) {  #function to simulate stochastic SIR
 # The function evaluate.model simulates an arbitrary number of realizations and 
 # returns the result.
 # Outermost call of model, calls model() which calls onestep()
-evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143, a0=1/1.5, w=12, c=1, presymptomatic=1, dt=0.05),
-                           init = list(S=10600000, E1=0, E2=0, E3=0, E4=0, E5=6, E6=0,
+evaluate.model <- function(params=list(beta0=1.4584, sigma=1/6.4, z=12, b=0.143, a0=1/1.5, w=12, c=1, presymptomatic=1, dt=0.25),
+                           init = list(S=651461, E1=0, E2=0, E3=0, E4=0, E5=6, E6=0,
                                        I1 = 1, I2= 0, I3=0, I4=0, Iu1=0, Iu2=0, Iu3=0, Iu4=0,
                                        H=0, Ru=0, C=0),
                            nsims=2, nstep=NULL, start=as.Date("2020-03-14"),today=Sys.Date()){
@@ -296,7 +296,7 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='')
   lines(H~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
   lines(C~cum.time,data=data[[1]], col=col.cases.ci, lty=1, lwd=1)
   
-  
+    
   axis(1, at=seq(0,max.time,5), labels=format(start+seq(0,max.time,5), format= '%b %d'))
   axis(2)
   box()
