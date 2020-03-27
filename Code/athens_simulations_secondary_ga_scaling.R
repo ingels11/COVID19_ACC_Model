@@ -3,21 +3,21 @@ source("Code/model_fncs.R")
 library(ggplot2)
 
 ### Read and Format Athens Cases Data ------------------------------------------
-primSecCounties <- read_csv("Data/primary and secondary counties cases.csv")
+dailyCases <- read_csv("Data/primSecNewCasesDaily.csv")
 
-primSecCounties$secondary <- rowSums(primSecCounties[,2:18])
+dailyCases$secondary <- rowSums(dailyCases[,2:18])
 # NOTE:
 # I only see Morgan county in the secondary service area 
 # Going to stop here for the moment and return to this if more data exists on 
 # those counties
 
 
-primSecCounties2 <- primSecCounties[1:which(primSecCounties$date == as.character(Sys.Date())), ]
-
+dailyCases2 <- dailyCases[1:which(dailyCases$date == as.character(Sys.Date())), ]
+dailyCases2$secondary_cum <- cumsum(dailyCases2$secondary)
 # NICK TO FIX THIS PLOT !!!!!!!! (Hopefully)
 
 # Plot of daily Athens cases
-ggplot(data = primSecCounties2, mapping = aes(x = date, y = secondary)) +
+ggplot(data = dailyCases2, mapping = aes(x = date, y = secondary)) +
   geom_bar(stat = "identity") +
   scale_x_date(breaks = function(x) seq.Date(from = min(x)+2, 
                                              to = max(x), 
@@ -31,12 +31,12 @@ ggplot(data = primSecCounties2, mapping = aes(x = date, y = secondary)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # # Plot of cumulative Athens cases
-# ggplot(data = acc_df, mapping = aes(x = Date, y = primary_cum)) +
-#   geom_bar(stat = "identity") +
-#   labs(x = "Day",
-#        y = "Cumulative Cases (Primary Service Area)") +
-#   theme_classic() +
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplot(data = dailyCases2, mapping = aes(x = date, y = secondary_cum)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Day",
+       y = "Cumulative Cases (Primary Service Area)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ### Read and Format Athens Scenarios -------------------------------------------
 # Most difficult part is setting the initial numbers of E and I in the model
@@ -90,15 +90,15 @@ beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "bet
 start = as.Date("2020-03-14")
 s <- scenarios[,3:31]
 i <- scen_row
-out7 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+out7 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=0.05),
                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
 
-plot.model.acc(out7, primSecCounties$date[1:which(primSecCounties$date == Sys.Date())], 
-               primSecCounties$secondary[1:which(primSecCounties$date == Sys.Date())],
+plot.model.acc(out7, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
                log='y', title='Benchmark: Baseline')
 
 ### Social Distancing Intervention (Scenario 8) --------------------------------
@@ -130,8 +130,8 @@ out8 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out8,  primSecCounties$date[1:which(primSecCounties$date == Sys.Date())], 
-               primSecCounties$secondary[1:which(primSecCounties$date == Sys.Date())],
+plot.model.acc(out8,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
                log='y', title='With Social Distancing')
 
 
