@@ -2,6 +2,63 @@ rm(list = ls())
 source("Code/model_fncs.R")
 library(ggplot2)
 
+
+
+
+
+## Data to be read in that will be used to create raw cumulative counts
+
+data <- read.csv("Data/primary and secondary counties cases.csv")
+data$date = as_date(data$date)
+datatwo <- data[1:which(data$date == Sys.Date()), ]
+
+datatwo$total <- rowSums(datatwo[,c(2:17)])
+
+
+library(lubridate)
+library(scales)
+library(ggplot2)
+
+# the important line:
+datatwo$newdate <- as.Date(parse_date_time(datatwo$date, "%y/%m/%d"))
+
+# plot(datatwo$newdate, datatwo$total, type='h', lwd=10, col='rosybrown',
+#      lend='butt', xlab='Date', ylab='Case Notifications', main='Case Notifications for Clarke and Surrounding Counties')
+
+library(ggplot2)
+ggplot(data = datatwo, aes(x = newdate, y = total)) +
+  geom_bar(stat = "identity", fill = "black", width=.3) + ylim(0,60)+
+  scale_x_date(breaks = function(x) seq.Date(from = min(x)+1, 
+                                             to = max(x), 
+                                             by = "3 days"), date_labels = "%b %d")+
+  labs(title = "Case Notifications for Clarke and Surrounding Counties",
+       x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                                     panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### Read and Format Athens Cases Data ------------------------------------------
 dailyCases <- read_csv("Data/primSecNewCasesDaily.csv")
 
@@ -98,9 +155,9 @@ outBaselineInt <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3
                        nsims=15, nstep=NULL, start=start)
 
 
-plot.model.acc(outBaselineInt, dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date()-1)],
-               log='y', title='Benchmark: Baseline')
+plot.model.acc(outBaselineInt, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
+               log='y', title='Natural Epidemic (No Social Distancing)')
 
 
 
@@ -132,8 +189,8 @@ outSD<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out8,  dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date()-1)],
+plot.model.acc(out8,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
                log='y', title='With Social Distancing')
 
 
@@ -173,8 +230,8 @@ outSDUpper <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date()-1)], 
+plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())], 
                log='y', title='With Social Distancing (Upper Bound)')
 
 
@@ -218,142 +275,142 @@ plot.model.acc(outSDLower, dailyCases$date[1:which(dailyCases$date == Sys.Date()
 # Bigger next
 
 
-### Social Distancing Intervention (Scenario 8) --------------------------------
-scen_row <- 8
-
-# If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
-gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
-  # piecewise function
-  # default parameters z = 12, b=1/7, a0=1/1.5
-  #    z: time at start of intervention (notionally March 12)
-  #    b: intercept (positive)
-  #    a0: post intervention isolation ratae
-  #    t: time in the model
-  
-  gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
-  return(gamma)
-}
-eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
-q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
-beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
-  ifelse(t<=w, beta0, beta0 / beta.factor)
-} 
-
-s <- scenarios[,3:31]
-i <- scen_row
-out8 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
-                       init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
-                                   I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
-                                   H=s[i,25], Ru=s[i,26], C=s[i,27]),
-                       nsims=15, nstep=NULL, start=start)
-
-plot.model.acc(out8,  dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date()-1)],
-               log='y', title='With Social Distancing')
-
-
-### Smaller and Larger Starting Sizes (Scenarios 3 and 5) ----------------------
-# Smaller first
-scen_row <- 3
-
-
-# If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
-gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
-  # piecewise function
-  # default parameters z = 12, b=1/7, a0=1/1.5
-  #    z: time at start of intervention (notionally March 12)
-  #    b: intercept (positive)
-  #    a0: post intervention isolation ratae
-  #    t: time in the model
-  
-  gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
-  return(gamma)
-}
-eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
-q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
-beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
-  ifelse(t<=w, beta0, beta0 / beta.factor)
-} 
-
-s <- scenarios[,3:31]
-i <- scen_row
-out3 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
-                       init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
-                                   I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
-                                   H=s[i,25], Ru=s[i,26], C=s[i,27]),
-                       nsims=15, nstep=NULL, start=start)
-
-plot.model.acc(out3, primSecCounties$date[1:which(primSecCounties$date == Sys.Date())], 
-               primSecCounties$secondary[1:which(primSecCounties$date == Sys.Date())],
-               log='y', title='With Social Distancing (Lower Bound)')
-# Doesn't work at all, too small of a starting size
-
-# Bigger next
-scen_row <- 5
-
-# Too stringent, earlier assumptions likely make more sense
-# If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
-gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
-  # piecewise function
-  # default parameters z = 12, b=1/7, a0=1/1.5
-  #    z: time at start of intervention (notionally March 12)
-  #    b: intercept (positive)
-  #    a0: post intervention isolation ratae
-  #    t: time in the model
-  
-  gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
-  return(gamma)
-}
-eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
-q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
-beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
-  ifelse(t<=w, beta0, beta0 / beta.factor)
-} 
-
-s <- scenarios[,3:31]
-i <- scen_row
-out5 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
-                       init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
-                                   I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
-                                   H=s[i,25], Ru=s[i,26], C=s[i,27]),
-                       nsims=15, nstep=NULL, start=start)
-
-plot.model.acc(out5, primSecCounties$date[1:which(primSecCounties$date == Sys.Date())], 
-           primSecCounties$secondary[1:which(primSecCounties$date == Sys.Date())], 
-           log='y', title='With Social Distancing (Upper Bound)')
-# No presymptomatic here, that seems to make a difference, doesn't behave well
-# Adding presymptomatic == 1, seems to make sense, creates a definite upper bound
-# in cumulative reported cases
-
-### Both Immedidate Interventions (Scenario 15) --------------------------------
-scen_row <- 9
-
-# Too stringent, earlier assumptions likely make more sense
-# If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
-gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
-  # piecewise function
-  # default parameters z = 12, b=1/7, a0=1/1.5
-  #    z: time at start of intervention (notionally March 12)
-  #    b: intercept (positive)
-  #    a0: post intervention isolation ratae
-  #    t: time in the model
-  
-  gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
-  return(gamma)
-}
-eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
-q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
-beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
-  ifelse(t<=w, beta0, beta0 / beta.factor)
-} 
-
-s <- scenarios[,3:31]
-i <- scen_row
-out15 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
-                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
-                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
-                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
-                        nsims=15, nstep=NULL, start=start)
-
-plot.model.acc(out15, log='y', title='Both early interventions')
-# Not sure this makes sense.
+# ### Social Distancing Intervention (Scenario 8) --------------------------------
+# scen_row <- 8
+# 
+# # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
+# gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
+#   # piecewise function
+#   # default parameters z = 12, b=1/7, a0=1/1.5
+#   #    z: time at start of intervention (notionally March 12)
+#   #    b: intercept (positive)
+#   #    a0: post intervention isolation ratae
+#   #    t: time in the model
+#   
+#   gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
+#   return(gamma)
+# }
+# eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
+# q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
+# beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
+#   ifelse(t<=w, beta0, beta0 / beta.factor)
+# } 
+# 
+# s <- scenarios[,3:31]
+# i <- scen_row
+# out8 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+#                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
+#                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
+#                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
+#                        nsims=15, nstep=NULL, start=start)
+# 
+# plot.model.acc(out8,  dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)], 
+#                dailyCases$secondary[1:which(dailyCases$date == Sys.Date()-1)],
+#                log='y', title='With Social Distancing')
+# 
+# 
+# ### Smaller and Larger Starting Sizes (Scenarios 3 and 5) ----------------------
+# # Smaller first
+# scen_row <- 3
+# 
+# 
+# # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
+# gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
+#   # piecewise function
+#   # default parameters z = 12, b=1/7, a0=1/1.5
+#   #    z: time at start of intervention (notionally March 12)
+#   #    b: intercept (positive)
+#   #    a0: post intervention isolation ratae
+#   #    t: time in the model
+#   
+#   gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
+#   return(gamma)
+# }
+# eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
+# q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
+# beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
+#   ifelse(t<=w, beta0, beta0 / beta.factor)
+# } 
+# 
+# s <- scenarios[,3:31]
+# i <- scen_row
+# out3 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+#                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
+#                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
+#                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
+#                        nsims=15, nstep=NULL, start=start)
+# 
+# plot.model.acc(out3, primSecCounties$date[1:which(primSecCounties$date == Sys.Date())], 
+#                primSecCounties$secondary[1:which(primSecCounties$date == Sys.Date())],
+#                log='y', title='With Social Distancing (Lower Bound)')
+# # Doesn't work at all, too small of a starting size
+# 
+# # Bigger next
+# scen_row <- 5
+# 
+# # Too stringent, earlier assumptions likely make more sense
+# # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
+# gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
+#   # piecewise function
+#   # default parameters z = 12, b=1/7, a0=1/1.5
+#   #    z: time at start of intervention (notionally March 12)
+#   #    b: intercept (positive)
+#   #    a0: post intervention isolation ratae
+#   #    t: time in the model
+#   
+#   gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
+#   return(gamma)
+# }
+# eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
+# q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
+# beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
+#   ifelse(t<=w, beta0, beta0 / beta.factor)
+# } 
+# 
+# s <- scenarios[,3:31]
+# i <- scen_row
+# out5 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+#                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
+#                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
+#                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
+#                        nsims=15, nstep=NULL, start=start)
+# 
+# plot.model.acc(out5, primSecCounties$date[1:which(primSecCounties$date == Sys.Date())], 
+#            primSecCounties$secondary[1:which(primSecCounties$date == Sys.Date())], 
+#            log='y', title='With Social Distancing (Upper Bound)')
+# # No presymptomatic here, that seems to make a difference, doesn't behave well
+# # Adding presymptomatic == 1, seems to make sense, creates a definite upper bound
+# # in cumulative reported cases
+# 
+# ### Both Immedidate Interventions (Scenario 15) --------------------------------
+# scen_row <- 9
+# 
+# # Too stringent, earlier assumptions likely make more sense
+# # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
+# gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
+#   # piecewise function
+#   # default parameters z = 12, b=1/7, a0=1/1.5
+#   #    z: time at start of intervention (notionally March 12)
+#   #    b: intercept (positive)
+#   #    a0: post intervention isolation ratae
+#   #    t: time in the model
+#   
+#   gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
+#   return(gamma)
+# }
+# eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
+# q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
+# beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
+#   ifelse(t<=w, beta0, beta0 / beta.factor)
+# } 
+# 
+# s <- scenarios[,3:31]
+# i <- scen_row
+# out15 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+#                         init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
+#                                     I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
+#                                     H=s[i,25], Ru=s[i,26], C=s[i,27]),
+#                         nsims=15, nstep=NULL, start=start)
+# 
+# plot.model.acc(out15, log='y', title='Both early interventions')
+# # Not sure this makes sense.
