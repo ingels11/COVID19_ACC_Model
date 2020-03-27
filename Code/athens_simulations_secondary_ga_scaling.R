@@ -242,7 +242,7 @@ plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date()
 
 
 
-## Getting final estimated case count for 
+## Getting final estimated case count for each scenario
 
 
 estCountRaw = NULL
