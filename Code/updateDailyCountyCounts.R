@@ -89,6 +89,20 @@ for (i in 1:nrow(countyCasesDaily)){
 
 write.csv(primSecCounties, "Data/primary and secondary counties cases.csv", row.names = F)
 
+newCasesDaily = data.frame(matrix(0L, nrow = nrow(primSecCounties), ncol = ncol(primSecCounties)))
+
+for(i in 2:nrow(primSecCounties)) {
+  newCasesDaily[i,2:18] = primSecCounties[i,2:18] - primSecCounties[i-1,2:18]
+  newCasesDaily[,1] = primSecCounties[,1]
+  names(newCasesDaily) = names(primSecCounties)
+}
+
+
+names(newCasesDaily) = names(primSecCounties)
+
+
+write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())), ], "Data/primSecNewCasesDaily.csv", row.names = F)
+
 
 
 

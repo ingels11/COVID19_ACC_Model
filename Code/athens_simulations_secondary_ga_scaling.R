@@ -12,11 +12,12 @@ primSecCounties$secondary <- rowSums(primSecCounties[,2:18])
 # those counties
 
 
-primSecCounties <- primSecCounties[1:which(primSecCounties$date == as.character(Sys.Date())), ]
+primSecCounties2 <- primSecCounties[1:which(primSecCounties$date == as.character(Sys.Date())), ]
 
+# NICK TO FIX THIS PLOT !!!!!!!! (Hopefully)
 
 # Plot of daily Athens cases
-ggplot(data = primSecCounties, mapping = aes(x = date, y = secondary)) +
+ggplot(data = primSecCounties2, mapping = aes(x = date, y = secondary)) +
   geom_bar(stat = "identity") +
   scale_x_date(breaks = function(x) seq.Date(from = min(x)+2, 
                                              to = max(x), 
@@ -96,7 +97,8 @@ out7 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 
-plot.model.acc(out7, primSecCounties$date[1:which(primSecCounties$date == Sys.Date())], primSecCounties$secondary[1:which(primSecCounties$date == Sys.Date())],
+plot.model.acc(out7, primSecCounties$date[1:which(primSecCounties$date == Sys.Date())], 
+               primSecCounties$secondary[1:which(primSecCounties$date == Sys.Date())],
                log='y', title='Benchmark: Baseline')
 
 ### Social Distancing Intervention (Scenario 8) --------------------------------
