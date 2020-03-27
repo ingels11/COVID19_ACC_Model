@@ -108,7 +108,7 @@ ggplot(data = dailyCases2, mapping = aes(x = date, y = secondary_cum)) +
 #     * not using GA scaling, step back one day and go with intermediate method
 #     *   then 9 early cases / 0.11 = 82
 
-scenarios <- read.csv("Data/athens secondary scenarios non-ga scaling.csv")
+scenarios <- read.csv("Data/athens secondary scenarios ga scaling.csv")
 scenarios[8, 15:24] = scenarios[7, 15:24]
 
 # Only the first 8 are currently setup
