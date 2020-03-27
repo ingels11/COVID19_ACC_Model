@@ -12,7 +12,7 @@ dailyCases$secondary <- rowSums(dailyCases[,2:18])
 # those counties
 
 
-dailyCases2 <- dailyCases[1:which(dailyCases$date == as.character(Sys.Date())), ]
+dailyCases2 <- dailyCases[1:which(dailyCases$date == as.character(Sys.Date()-1)), ]
 dailyCases2$secondary_cum <- cumsum(dailyCases2$secondary)
 # NICK TO FIX THIS PLOT !!!!!!!! (Hopefully)
 
@@ -97,8 +97,8 @@ out7 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 
-plot.model.acc(out7, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
+plot.model.acc(out7, dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date()-1)],
                log='y', title='Benchmark: Baseline')
 
 ### Social Distancing Intervention (Scenario 8) --------------------------------
@@ -130,8 +130,8 @@ out8 <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out8,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
+plot.model.acc(out8,  dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date()-1)],
                log='y', title='With Social Distancing')
 
 

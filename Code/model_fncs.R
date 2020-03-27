@@ -126,7 +126,7 @@ evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143,
                                        H=0, Ru=0, C=0),
                            nsims=2, nstep=NULL, start=as.Date("2020-03-14"),today=Sys.Date()){
 
-  if(is.null(nstep)) nstep <- (as.numeric(today-start)+1+21)/params$dt #run simulation from start to current time plus four weeks
+  if(is.null(nstep)) nstep <- (as.numeric(today-start)+1+28)/params$dt #run simulation from start to current time plus four weeks
   
   xstart <- c(time=0, unlist(init), cum.time = 0) #initial conditions
   
