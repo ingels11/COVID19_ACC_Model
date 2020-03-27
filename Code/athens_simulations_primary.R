@@ -23,24 +23,31 @@ acc_df$primary <- acc_df$Clarke + acc_df$Oconee + acc_df$Barrow + acc_df$Madison
 acc_df$primary_cum <- cumsum(acc_df$primary)
 
 names(acc_df)[1] <- "Date"
-acc_df$Date <- as.character(acc_df$Date)
-acc_df$Date <- as.Date(stringr::str_replace_all(acc_df$Date, "-", "/"), 
-                       format = "%m/%d/%Y")
+acc_df$Date <- as.Date(acc_df$Date)
+
 # Currently cut off for 3/24
-acc_df <- acc_df[1:which(acc_df$Date == as.Date("3/23/20", format = "%m/%d/%y")), ]
+acc_df <- acc_df[1:which(acc_df$Date == as.character(Sys.Date())), ]
 
 
 # Plot of daily Athens cases
 ggplot(data = acc_df, mapping = aes(x = Date, y = primary)) +
   geom_bar(stat = "identity") +
+  scale_x_date(breaks = function(x) seq.Date(from = min(x)+2, 
+                                             to = max(x), 
+                                             by = "3 days"), date_labels = "%b %d")+
+               # minor_breaks = function(x) seq.Date(from = min(x), 
+               #                                     to = max(x), 
+               #                                     by = "2 years")) +
   labs(x = "Day",
        y = "New Cases (Primary Service Area)") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
 # Plot of cumulative Athens cases
 ggplot(data = acc_df, mapping = aes(x = Date, y = primary_cum)) +
   geom_bar(stat = "identity") +
+  scale_x_date(breaks = function(x) seq.Date(from = min(x)+2, 
+                                             to = max(x), 
+                                             by = "3 days"), date_labels = "%b %d")+
   labs(x = "Day",
        y = "Cumulative Cases (Primary Service Area)") +
   theme_classic() +
