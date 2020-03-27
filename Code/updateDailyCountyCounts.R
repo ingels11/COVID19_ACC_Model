@@ -81,7 +81,7 @@ for (i in 1:nrow(countyCasesDaily)){
   
   if (countyCasesDaily$County[i] %in%(names(primSecCounties))){
     
-    primSecCounties[primSecCounties$date == Sys.Date()-1, as.character(countyCasesDaily$County)[i]] = 
+    primSecCounties[primSecCounties$date == Sys.Date(), as.character(countyCasesDaily$County)[i]] = 
       countyCasesDaily[countyCasesDaily$County == as.character(countyCasesDaily$County)[i], 2]
   }
 }
