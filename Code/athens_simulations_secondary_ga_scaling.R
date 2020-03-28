@@ -32,7 +32,11 @@ ggplot(data = datatwo, aes(x = newdate, y = total)) +
                                              to = max(x), 
                                              by = "2 days"), date_labels = "%b %d")+
   labs(title = "Case Notifications for Clarke and Surrounding Counties",
-       x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+       x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(), 
+                                                     plot.title = element_text(size = 22),
+                                                     axis.title.x = element_text(size = 14, margin = margin(20, 0,0,0)),
+                                                     axis.title.y = element_text(size = 14, margin = margin(0, 20, 0, 0)),
+                                                     panel.grid.minor = element_blank(),
                                                      panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 
@@ -325,9 +329,32 @@ for (i in 1:15){
 }
 
 
-c(mean(estCountRaw), mean(estCountRawUpper), mean(finalEstCountSD), mean(finalEstCountSDUpp))
+ceiling(c(mean(estCountRaw), mean(estCountRawUpper), mean(finalEstCountSD), mean(finalEstCountSDUpp)))
 
 
+empty = data.frame(matrix(0L, nrow = nrow(outSD[[15]]), ncol = 16))
+
+for (i in 1:15){
+  empty[, 1] = as.data.frame(outBaselineInt[[1]]$cum.time)
+  empty[, i+1] = as.data.frame(outBaselineInt[[i]]$C)
+}
+
+names(empty)[1] = c("time")
+
+empty2 = empty[which(empty$time %% 1 == 0),]
+empty2$date = seq(as.Date("2020-03-14"), as.Date("2020-04-25"), by = "day")
+
+
+
+for(row in 1:nrow(empty2)){
+  empty2$estCumCases[row] = ceiling(mean(as.numeric(empty2[row, 2:16])))
+}
+
+
+
+estCasesByDay = empty2[, 17:18]
+estCasesByDay$date = format(estCasesByDay$date,  "%B %d")
+write.csv(estCasesByDay, "/Users/ishaandave/Desktop/COVID Scratch Work/Cases By Day.csv", row.names = F)
 
 ## Lower Bound Social Distancing 
 
