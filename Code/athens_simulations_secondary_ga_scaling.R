@@ -27,10 +27,10 @@ datatwo$newdate <- as.Date(parse_date_time(datatwo$date, "%y/%m/%d"))
 
 library(ggplot2)
 ggplot(data = datatwo, aes(x = newdate, y = total)) +
-  geom_bar(stat = "identity", fill = "black", width=.3) + ylim(0,60)+
-  scale_x_date(breaks = function(x) seq.Date(from = min(x)+1, 
+  geom_bar(stat = "identity", fill = "black", width=.3) + ylim(0,65)+
+  scale_x_date(breaks = function(x) seq.Date(from = min(x), 
                                              to = max(x), 
-                                             by = "3 days"), date_labels = "%b %d")+
+                                             by = "2 days"), date_labels = "%b %d")+
   labs(title = "Case Notifications for Clarke and Surrounding Counties",
        x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                                      panel.background = element_blank(), axis.line = element_line(colour = "black"))
@@ -116,8 +116,11 @@ scenarios[8, 15:24] = scenarios[7, 15:24] # forgot to update the E's and I's for
                                           # to have the same number of starting cases (55)
                                           # and NOT!! 82 like it says in the actual scenario datasheet.
 
+
+scenarios[9, 15:ncol(scenarios)] = scenarios[5, 15:ncol(scenarios)]
+scenarios[9, 1:14] = scenarios[7, 1:14]
 # Only the first 8 are currently setup
-scenarios <- scenarios[c(1:8), ]
+scenarios <- scenarios[c(1:9), ]
 # move columns 11 and 12 to the end
 scenarios <- scenarios[, c(1:10, 13:31, 11, 12)]
 
@@ -160,9 +163,59 @@ outBaselineInt <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3
                        nsims=15, nstep=NULL, start=start)
 
 
+
 plot.model.acc(outBaselineInt, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
                dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
                log='y', title='Natural Epidemic (No Social Distancing)')
+
+
+
+
+
+
+
+
+scen_row <- 9
+
+# If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
+gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
+  # piecewise function
+  # default parameters z = 12, b=1/7, a0=1/1.5
+  #    z: time at start of intervention (notionally March 12)
+  #    b: intercept (positive)
+  #    a0: post intervention isolation ratae
+  #    t: time in the model
+  
+  gamma <- ifelse(t<=z, gamma <- b, gamma <- a0)
+  return(gamma)
+}
+eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
+q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
+beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
+  ifelse(t<=w, beta0, beta0 / beta.factor)
+} 
+
+start = as.Date("2020-03-14")
+s <- scenarios[,3:31]
+i <- scen_row
+outBaselineUpper <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=0.05),
+                                 init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
+                                             I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
+                                             H=s[i,25], Ru=s[i,26], C=s[i,27]),
+                                 nsims=15, nstep=NULL, start=start)
+
+
+
+plot.model.acc(outBaselineUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
+               log='y', title='Natural Epidemic (No Social Distancing) Upper Bound')
+
+
+
+
+
+
+
 
 
 
@@ -194,7 +247,7 @@ outSD<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(out8,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
                dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
                log='y', title='With Social Distancing')
 
@@ -252,6 +305,13 @@ for (i in 1:15){
 
 mean(estCountRaw)
 
+
+estCountRawUpper = NULL
+for (i in 1:15){
+  estCountRawUpper[i] = c((outBaselineUpper[[i]]$C[841]))
+}
+
+
 finalEstCountSD = NULL
 for (i in 1:15){
   finalEstCountSD[i] = c((outSD[[i]]$C[841]))
@@ -265,7 +325,7 @@ for (i in 1:15){
 }
 
 
-c(mean(estCountRaw), mean(finalEstCountSD), mean(finalEstCountSDUpp))
+c(mean(estCountRaw), mean(estCountRawUpper), mean(finalEstCountSD), mean(finalEstCountSDUpp))
 
 
 

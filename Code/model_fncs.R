@@ -279,7 +279,7 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='')
   #set up plot
   plot(I~cum.time,data=data[[1]],xlab='',ylab='Cases',col=1,
        xlim=c(0,max.time),ylim=c(1,max.y), type='n', lty=1, log=log,
-       axes=FALSE, main=title, cex.main=0.8) # set up plot
+       axes=FALSE, main=title, cex.main=1) # set up plot
   
   # add data to plot
   # day <- georgia$date - start
