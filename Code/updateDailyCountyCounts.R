@@ -1,7 +1,6 @@
 ## This code is run daily to ensure that number of cases in our working dataset is properly pulled from the 
 ## Georgia DPH website with number of confirmed cases in each county
 library(rvest)
-install.packages("xml")
 library(lubridate)
 
 # Tell which website to look in / scrape HTML cod 
