@@ -73,31 +73,31 @@ dailyCases$secondary <- rowSums(dailyCases[,2:18])
 # those counties
 
 
-dailyCases2 <- dailyCases[1:which(dailyCases$date == as.character(Sys.Date()-1)), ]
+dailyCases2 <- dailyCases[1:which(dailyCases$date == as.character(Sys.Date())), ]
 dailyCases2$secondary_cum <- cumsum(dailyCases2$secondary)
 # NICK TO FIX THIS PLOT !!!!!!!! (Hopefully)
 
 # Plot of daily Athens cases
-ggplot(data = dailyCases2, mapping = aes(x = date, y = secondary)) +
-  geom_bar(stat = "identity") +
-  scale_x_date(breaks = function(x) seq.Date(from = min(x)+2, 
-                                             to = max(x), 
-                                             by = "3 days"), date_labels = "%b %d")+
-  # minor_breaks = function(x) seq.Date(from = min(x), 
-  #                                     to = max(x), 
-  #                                     by = "2 years")) +
-  labs(x = "Day",
-       y = "New Cases (Primary Service Area)") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# ggplot(data = dailyCases2, mapping = aes(x = date, y = secondary)) +
+#   geom_bar(stat = "identity") +
+#   scale_x_date(breaks = function(x) seq.Date(from = min(x)+2, 
+#                                              to = max(x), 
+#                                              by = "3 days"), date_labels = "%b %d")+
+#   # minor_breaks = function(x) seq.Date(from = min(x), 
+#   #                                     to = max(x), 
+#   #                                     by = "2 years")) +
+#   labs(x = "Day",
+#        y = "New Cases (Primary Service Area)") +
+#   theme_classic() +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 # # Plot of cumulative Athens cases
-ggplot(data = dailyCases2, mapping = aes(x = date, y = secondary_cum)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Day",
-       y = "Cumulative Cases (Primary Service Area)") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# ggplot(data = dailyCases2, mapping = aes(x = date, y = secondary_cum)) +
+#   geom_bar(stat = "identity") +
+#   labs(x = "Day",
+#        y = "Cumulative Cases (Primary Service Area)") +
+#   theme_classic() +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ### Read and Format Athens Scenarios -------------------------------------------
 # Most difficult part is setting the initial numbers of E and I in the model
@@ -342,7 +342,7 @@ for (i in 1:15){
 names(empty)[1] = c("time")
 
 empty2 = empty[which(empty$time %% 1 == 0),]
-empty2$date = seq(as.Date("2020-03-14"), as.Date("2020-04-25"), by = "day")
+empty2$date = seq(as.Date("2020-03-14"), as.Date("2020-03-14")+nrow(empty2)-1, by = "day")
 
 
 
@@ -354,7 +354,7 @@ for(row in 1:nrow(empty2)){
 
 estCasesByDay = empty2[, 17:18]
 estCasesByDay$date = format(estCasesByDay$date,  "%B %d")
-write.csv(estCasesByDay, "/Users/ishaandave/Desktop/COVID Scratch Work/Cases By Day.csv", row.names = F)
+write.csv(estCasesByDay, paste0("/Users/ishaandave/Desktop/COVID Scratch Work/Cases By Day", Sys.Date(), ".csv"), row.names = F)
 
 ## Lower Bound Social Distancing 
 
