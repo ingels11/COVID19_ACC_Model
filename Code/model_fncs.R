@@ -120,7 +120,7 @@ model <- function (x, params, nstep) {  #function to simulate stochastic SIR
 # The function evaluate.model simulates an arbitrary number of realizations and 
 # returns the result.
 # Outermost call of model, calls model() which calls onestep()
-evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143, a0=1/1.5, w=12, c=1, presymptomatic=1, dt=0.25),
+evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143, a0=1/1.5, w=12, c=1, presymptomatic=1, dt=0.05),
                            init = list(S=651461, E1=0, E2=0, E3=0, E4=0, E5=6, E6=0,
                                        I1 = 1, I2= 0, I3=0, I4=0, Iu1=0, Iu2=0, Iu3=0, Iu4=0,
                                        H=0, Ru=0, C=0),
@@ -279,7 +279,7 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='')
   #set up plot
   plot(I~cum.time,data=data[[1]],xlab='',ylab='Cases',col=1,
        xlim=c(0,max.time),ylim=c(1,max.y), type='n', lty=1, log=log,
-       axes=FALSE, main=title, cex.main=0.8) # set up plot
+       axes=FALSE, main=title, cex.main=1) # set up plot
   
   # add data to plot
   # day <- georgia$date - start

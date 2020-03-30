@@ -1,27 +1,28 @@
 ## This code is run daily to ensure that number of cases in our working dataset is properly pulled from the 
 ## Georgia DPH website with number of confirmed cases in each county
 library(rvest)
-
 library(lubridate)
 
 # Tell which website to look in / scrape HTML cod 
-dailyCountWebsite <- read_html("https://dph.georgia.gov/covid-19-daily-status-report")
-
+dailyCountWebsite <- "https://d20s4vd27d0hk0.cloudfront.net/?initialWidth=663&childId=covid19dashdph&parentTitle=COVID-19%20Daily%20Status%20Report%20%7C%20Georgia%20Department%20of%20Public%20Health&parentUrl=https%3A%2F%2Fdph.georgia.gov%2Fcovid-19-daily-status-report"
+tables = read_html(dailyCountWebsite)
 
 # Telling R to grab only the TABLES from the website
-tbls <- html_nodes(dailyCountWebsite, "table")
+tbls <- html_nodes(tables, "table")
 
 
 # head(tbls)
 
 # From looking at the website, the table we want is the 3rd table on the site
-tbls_ls <- dailyCountWebsite %>%
+tbls_ls <- tbls %>%
   html_nodes("table") %>%
-  .[3] %>%                    ## Indicating we want the 3rd table
+  .[6] %>%                    ## Indicating we want the 3rd table
   html_table(fill = TRUE)
 
 # Creating a dataframe from the picked table
 countyCasesDaily = as.data.frame(tbls_ls)
+names(countyCasesDaily) = c("County", "Cases", "Deaths")
+countyCasesDaily = countyCasesDaily[c(-1, -nrow(countyCasesDaily)), -3]
 
 
 # countyCasesDaily$date = ymd(Sys.Date())
@@ -92,8 +93,11 @@ write.csv(primSecCounties, "Data/primary and secondary counties cases.csv", row.
 newCasesDaily = data.frame(matrix(0L, nrow = nrow(primSecCounties), ncol = ncol(primSecCounties)))
 
 for(i in 2:nrow(primSecCounties)) {
-  newCasesDaily[i,2:18] = primSecCounties[i,2:18] - primSecCounties[i-1,2:18]
+  
   newCasesDaily[,1] = primSecCounties[,1]
+  
+  newCasesDaily[i, 2:18] = as.numeric(primSecCounties[i, 2:18]) - as.numeric(primSecCounties[i-1, 2:18])
+  
   names(newCasesDaily) = names(primSecCounties)
 }
 
