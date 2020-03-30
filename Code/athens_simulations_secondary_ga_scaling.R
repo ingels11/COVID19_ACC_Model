@@ -27,9 +27,9 @@ datatwo$newdate <- as.Date(parse_date_time(datatwo$date, "%y/%m/%d"))
 
 library(ggplot2)
 ggplot(data = datatwo, aes(x = newdate, y = total)) +
-  geom_bar(stat = "identity", fill = "black", width=.3) + ylim(0,65)+
+  geom_bar(stat = "identity", fill = "black", width=.3) + ylim(0, max(datatwo$total)+1)+
   scale_x_date(breaks = function(x) seq.Date(from = min(x), 
-                                             to = max(x), 
+                                             to = max(x)+3, 
                                              by = "2 days"), date_labels = "%b %d")+
   labs(title = "Case Notifications for Clarke and Surrounding Counties",
        x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(), 
