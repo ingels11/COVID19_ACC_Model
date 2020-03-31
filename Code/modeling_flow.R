@@ -3,6 +3,9 @@
 #   "primSecNewCasesDaily.csv"
 source("Code/updateDailyCountyCounts.R")
 
+rm(list = ls())
+source("Code/model_fncs.R")
+
 # run models
 # models found in athens_simulations_secondary_ga_scaling.R
 # evaluate.model() -> model() -> onestep()
@@ -19,6 +22,8 @@ source("Code/updateDailyCountyCounts.R")
 # hospital_capacity()
 
 latest_date <- "2020-03-31"
+
+# Social distancing works well
 # 15 simulations of the base social distancing model
 base_mod <- read_rds(paste0("Models/social_distance_base_", latest_date))
 base_hosp_mod <- model_hospitalizations(base_mod)
@@ -28,12 +33,27 @@ base_hosp_mod <- hospital_capacity(base_hosp_mod)
 # Plot results
 dailyCases <- read_csv("Data/primSecNewCasesDaily.csv")
 dailyCases$secondary <- rowSums(dailyCases[,2:18])
-plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+plot.model.acc(base_mod,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
                dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
                log='y', title='Baseline Model With Social Distancing')
 plot_hospitalizations(base_hosp_mod, type = "cum")
 plot_hospitalizations(base_hosp_mod, type = "capacity")
 plot_hospitalizations(base_hosp_mod, type = "pct")
+
+# Social distancing works not as well
+# 15 simulations of the base social distancing model
+upper_mod <- read_rds(paste0("Models/social_distance_upper_", latest_date))
+upper_hosp_mod <- model_hospitalizations(upper_mod)
+upper_hosp_mod <- summarise_model_hospitalizations(upper_hosp_mod)
+upper_hosp_mod <- hospital_capacity(upper_hosp_mod)
+
+# Plot results
+plot.model.acc(upper_mod,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
+               log='y', title='Baseline Model With Worse Social Distancing')
+plot_hospitalizations(upper_hosp_mod, type = "cum")
+plot_hospitalizations(upper_hosp_mod, type = "capacity")
+
 
 # Natural epidemic
 epid_mod <- read_rds(paste0("Models/epidemic_base_", latest_date))

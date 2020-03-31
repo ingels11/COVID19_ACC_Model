@@ -646,7 +646,7 @@ plot_model_hc <- function(res_sum) {
   return(pl)
 }
 
-plot_hospitalizations <- function(res_sum, type = "cum") {
+plot_hospitalizations <- function(res_sum, title = "", type = "cum") {
   
   # read in up to date hospitalizations file
   parmc_df <- read_format_hosp()
@@ -662,7 +662,8 @@ plot_hospitalizations <- function(res_sum, type = "cum") {
                data = parmc_df, stat = "identity") +
       geom_line(mapping = aes(x = Dates, y = Hosp_tot_high),
                 data = res_sum) +
-      labs(x = "Dates", y = "Total number of hospitalizations") +
+      labs(x = "Dates", y = "Total number of hospitalizations",
+           title = title) +
       theme_classic()
     
   } else if (type == "capacity") {
@@ -671,14 +672,16 @@ plot_hospitalizations <- function(res_sum, type = "cum") {
                data = parmc_df, stat = "identity") +
       geom_line(mapping = aes(x = Dates, y = Hosp_capacity_high),
                 data = res_sum) +
-      labs(x = "Dates", y = "Current number of hospitalized") +
+      labs(x = "Dates", y = "Current number of hospitalized",
+           title = title) +
       theme_classic()
     
   } else if (type == "pct") {
     res_sum %<>% mutate(hosp_pct = Hosp_tot_high / Case_tot)
     ggplot(mapping = aes(x = Dates, y = hosp_pct), data = res_sum) +
       geom_line() +
-      labs(x = "Dates", y = "Percent of Cases Hospitalized") +
+      labs(x = "Dates", y = "Percent of Cases Hospitalized",
+           title = title) +
       theme_classic()
     
   }

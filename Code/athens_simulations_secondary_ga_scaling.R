@@ -1,14 +1,10 @@
 rm(list = ls())
 source("Code/model_fncs.R")
 library(ggplot2)
-<<<<<<< HEAD
 library(lubridate)
 library(scales)
 library(readr)
-=======
 library(tidyverse)
-
->>>>>>> e94724d0a53b3450a4e3ee9aa62a723768157c64
 
 ## Data to be read in that will be used to create raw cumulative counts
 
@@ -25,27 +21,27 @@ datatwo$newdate <- as.Date(parse_date_time(datatwo$date, "%y/%m/%d"))
 # plot(datatwo$newdate, datatwo$total, type='h', lwd=10, col='rosybrown',
 #      lend='butt', xlab='Date', ylab='Case Notifications', main='Case Notifications for Clarke and Surrounding Counties')
 
-<<<<<<< HEAD
 ggplot(data = datatwo, aes(x = newdate, y = total)) +
-  geom_bar(stat = "identity", fill = "black", width=.3) + ylim(0, max(datatwo$total)+1)+
-=======
-library(ggplot2)
-ggplot(data = datatwo, aes(x = newdate, y = total, label = total)) +
-  geom_bar(stat = "identity", fill = "black", width=.3) +
-  geom_text(data = datatwo, aes(x = newdate, y = total, label = total), 
-            position=position_dodge(width=1), vjust=-1) +
-  scale_y_continuous(breaks = seq(0, max(datatwo$total), by = 20))+
->>>>>>> e94724d0a53b3450a4e3ee9aa62a723768157c64
-  scale_x_date(breaks = function(x) seq.Date(from = min(x), 
-                                             to = max(x)+3, 
-                                             by = "1 days"), date_labels = "%b %d")+
-  labs(title = "Case Notifications for Clarke and Surrounding Counties",
-       x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(), 
-                                                     plot.title = element_text(size = 22),
-                                                     axis.title.x = element_text(size = 14, margin = margin(20, 0,0,0)),
-                                                     axis.title.y = element_text(size = 14, margin = margin(0, 20, 0, 0)),
-                                                     panel.grid.minor = element_blank(),
-                                                     panel.background = element_blank(), axis.line = element_line(colour = "black"))
+  geom_bar(stat = "identity", fill = "black", width=.3) + 
+  ylim(0, max(datatwo$total)+1) +
+  theme_classic()
+
+
+# ggplot(data = datatwo, aes(x = newdate, y = total, label = total)) +
+#   geom_bar(stat = "identity", fill = "black", width=.3) +
+#   geom_text(data = datatwo, aes(x = newdate, y = total, label = total), 
+#             position=position_dodge(width=1), vjust=-1) +
+#   scale_y_continuous(breaks = seq(0, max(datatwo$total), by = 20))+
+#   scale_x_date(breaks = function(x) seq.Date(from = min(x, na.rm = TRUE), 
+#                                              to = max(x, na.rm = TRUE)+3, 
+#                                              by = "1 days"), date_labels = "%b %d")+
+#   labs(title = "Case Notifications for Clarke and Surrounding Counties",
+#        x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(), 
+#                                                      plot.title = element_text(size = 22),
+#                                                      axis.title.x = element_text(size = 14, margin = margin(20, 0,0,0)),
+#                                                      axis.title.y = element_text(size = 14, margin = margin(0, 20, 0, 0)),
+#                                                      panel.grid.minor = element_blank(),
+#                                                      panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 
 
@@ -268,8 +264,8 @@ write_rds(outSD, paste0("Models/", "social_distance_base_", Sys.Date()))
 
 
 
-## Baseline Upper Bound Social Distancing
-scen_row <- 5
+## Baseline Upper Bound Social Distancing (same as 8 but social distancing is worse)
+scen_row <- 8
 
 # Too stringent, earlier assumptions likely make more sense
 # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
@@ -286,7 +282,7 @@ gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=s
 }
 eta <- function(t, w = scenarios[scen_row, "w"]) ifelse(t<=w, 1/3, 1/3)
 q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=scenarios[scen_row, "q1"]) ifelse(t<=w, q0, q1)
-beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2) {
+beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=1.5) {
   ifelse(t<=w, beta0, beta0 / beta.factor)
 } 
 
@@ -303,7 +299,7 @@ plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date()
                log='y', title='With Social Distancing (Upper Bound)')
 
 
-
+write_rds(outSDUpper, paste0("Models/", "social_distance_upper_", Sys.Date()))
 
 ## Getting final estimated case count for each scenario
 
