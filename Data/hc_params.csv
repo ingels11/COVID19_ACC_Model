@@ -1,0 +1,35 @@
+﻿param,descrip,value,note
+Ntot,total population size,637621,
+Nc,total population (children),142095,
+Ne,total population (elderly),71523,
+Nve,total population (very elderly),68066,
+C_hosp_low,"hospitalization, children, low",0.0015,0.001
+C_hosp_high,"hospitalization, children, high",0.015,0.01
+A_hosp_low,"hospitalization, adults, low",0.015,0.01
+A_hosp_high,"hospitalization, adults, high",0.15,0.1
+E_hosp_low,"hospitalization, elderly, low",0.15,0.1
+E_hosp_high,"hospitalization, elderly, high",0.375,0.25
+VE_hosp_low,"hospitalization, very elderly, low",0.3,0.2
+VE_hosp_high,"hospitalization, very elderly, high",0.75,0.5
+C_crit_low,"critical, children, low",0.01,
+C_crit_high,"critical, children, high",0.1,
+A_crit_low,"critical, adults, low",0.05,
+A_crit_high,"critical, adults, high",0.15,
+E_crit_low,"critical, elderly, low",0.2,
+E_crit_high,"critical, elderly, high",0.4,
+VE_crit_low,"critical, very elderly, low",0.4,
+VE_crit_high,"critical, very elderly, high",0.7,
+C_death_low,"death, children, low",0.00005,
+C_death_high,"death, children, high",0.0001,
+A_death_low,"death, adults, low",0.001,
+A_death_high,"death, adults, high",0.01,
+E_death_low,"death, elderly, low",0.02,
+E_death_high,"death, elderly, high",0.08,
+VE_death_low,"death, very elderly, low",0.05,
+VE_death_high,"death, very elderly, high",0.2,
+hosp_time_low,"hospital days, low",10,
+hosp_time_high,"hospital days, high",20,
+crit_time_low,"critical days, low",10,
+crit_time_high,"critical days, high",20,
+hosp_delay,hospital delay,0,hospital delay doesn't make sense early on and should be removed for better ACC estiamtes
+death_delay,death delay,10,

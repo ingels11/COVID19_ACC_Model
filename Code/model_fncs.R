@@ -2,6 +2,10 @@
 # http://2019-coronavirus-tracker.com/stochastic-model.html
 # The Georgia simulations are posted here
 # http://2019-coronavirus-tracker.com/stochastic-GA.html
+library(dplyr)
+library(magrittr)
+library(readr)
+library(tidyr)
 
 ### Modelling the Epidemic -----------------------------------------------------
 
@@ -126,7 +130,10 @@ evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143,
                                        H=0, Ru=0, C=0),
                            nsims=2, nstep=NULL, start=as.Date("2020-03-14"),today=Sys.Date()){
 
-  if(is.null(nstep)) nstep <- (as.numeric(today-start)+1+28)/params$dt #run simulation from start to current time plus four weeks
+  #run simulation from start to current time plus four weeks
+  forward_days <- 28
+  if(is.null(nstep)) nstep <- (as.numeric(today - start) + 1 + forward_days) / 
+      params$dt 
   
   xstart <- c(time=0, unlist(init), cum.time = 0) #initial conditions
   
@@ -138,6 +145,15 @@ evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143,
     
   }
   
+  # Add metadata to the simulation output
+  attr(data, "nsims") <- nsims
+  attr(data, "start_date") <- start
+  attr(data, "nstep") <- nstep
+  attr(data, "dt") <- params$dt
+  attr(data, "forward_days") <- forward_days
+  attr(data, "params") <- params
+  attr(data, "init") <- init
+  attr(data, "ndays") <- as.numeric(today - start) + 1 + forward_days
   return(data)
 }
 
@@ -343,4 +359,361 @@ q <- function(t, w=12, q0=1, q1=1) ifelse(t<=w,q0,q1)
 
 beta <- function(t, w=12, beta0=0.6584, beta.factor=2) ifelse(t<=w,beta0,beta0/beta.factor)
 
-### Modelling the Epidemic -----------------------------------------------------
+### Modelling Healthcare -------------------------------------------------------
+model_hospitalizations <- function(data) {
+
+  nsims <- length(data)
+  
+  # Need to pass the results of the evaluate.model function (MOD)
+  # X number of simulations for a specific set of parameters and starting values  
+  for(i in 1:nsims) data[[i]]$I <- data[[i]]$I1 + data[[i]]$I2 + data[[i]]$I3 +
+      data[[i]]$I4
+  for(i in 1:nsims) data[[i]]$Iu <- data[[i]]$Iu1 + data[[i]]$Iu2 + data[[i]]$Iu3 +
+      data[[i]]$Iu4
+  for(i in 1:nsims) data[[i]]$E <- data[[i]]$E1 + data[[i]]$E2 + data[[i]]$E3 +
+      data[[i]]$E4 + data[[i]]$E5 + data[[i]]$E6
+  
+  #maximum time in first simulation
+  max.time<-data[[1]]$cum.time[max(which(data[[1]]$I>0))] 
+  #find max total confirmed cases for plotting range
+  # max.y<-max(data[[1]]$C)
+  # Changing this to max of C, I + Iu, or E to expand y range and capture all information
+  max.y <- max(c(max(data[[1]]$C), max(data[[1]]$I + data[[1]]$Iu), 
+                 max(data[[1]]$E)))
+  
+  # calculate means
+  # m1 <- m2 <- m3 <- m4 <- m5 <- matrix(nrow = length(data[[1]]$I), ncol = nsims)
+  m1 <- m2 <- m4 <- m5 <- matrix(nrow = length(data[[1]]$I), ncol = nsims)
+  for(i in 1:nsims){
+    m1[, i] <- data[[i]]$E
+    m2[, i] <- data[[i]]$I + data[[i]]$Iu
+    # m3[, i] <- data[[i]]$Iu
+    m4[, i] <- data[[i]]$H
+    m5[, i] <- data[[i]]$C
+  }
+  E.mean <- rowMeans(m1)
+  I.mean <- rowMeans(m2)
+  # Iu.mean <- rowMeans(m3)
+  H.mean <- rowMeans(m4)
+  C.mean <- rowMeans(m5)
+
+  # read in healthcare parameters file
+  hc_params <- read_csv("Data/hc_params.csv")
+  hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
+                        hc_params$param)
+  # create variables from list of parameters
+  # this is done so as to not have to edit as much of Andreas' code
+  for (i in 1:length(hc_params)) {
+    assign(paste0(names(hc_params)[i]), hc_params[[i]])
+  }
+  
+  Na <- Ntot - Nc - Ne #everyone between 18 and 65 (adults)
+  C_prop <- Nc / Ntot
+  A_prop <- Na / Ntot
+  E_prop <- Ne / Ntot
+  VE_prop <- Nve / Ntot
+  
+  # res = list() #save results as list
+  # for (n1 in 1:length(data)) #looping over all scenarios
+  # {
+    # x = data[[n1]]
+    x <- data
+    res2 <- list() #results from each stochastic replicate
+    
+    #loop over each stochastic replicate simulation for a given scenario
+    for (n2 in 1:length(x)) 
+    {
+      y <- x[[n2]]
+
+      #daily data
+      report.times <- seq(1, (length(y$cum.time)), by = (1 / attr(data, "dt"))) 
+      #use notified cases as basis for hospitalizations
+      #this has a few day time lag between a person being diagnosed
+      Ctotdaily = y$C[report.times] #total number of cases
+      Cnewdaily = diff(Ctotdaily) #daily number of new cases
+      
+      # new hospitalizations
+      # assuming specific proportions of children/adults/elderly and 
+      # associated risks   
+      Hosp_new_low = Cnewdaily * (C_prop * C_hosp_low + A_prop * A_hosp_low + 
+                                    E_prop * E_hosp_low + VE_prop * VE_hosp_low)  
+      Hosp_new_high = Cnewdaily * (C_prop * C_hosp_high + A_prop * A_hosp_high + 
+                                     E_prop * E_hosp_high + 
+                                     VE_prop * VE_hosp_high) 
+      
+      # total hospitalization, is the cumulative of the last hosp_time days of 
+      # new hospitalizations
+      Hosp_tot_low = rep(0, length(Hosp_new_low))
+      Hosp_tot_high = Hosp_tot_low
+      for (n3 in 1:length(Hosp_new_low))
+      {
+        Hosp_tot_low[n3] = sum(Hosp_new_low[max(1, n3 - hosp_time_low):n3])
+        Hosp_tot_high[n3] = sum(Hosp_new_high[max(1, n3 - hosp_time_high):n3]) 
+      }
+      
+      # new critical cases
+      # assuming specific proportions of children/adults/elderly and associated 
+      #   critical risks   
+      Crit_new_low = Cnewdaily * (C_prop * C_hosp_low * C_crit_low + 
+                                    A_prop * A_hosp_low * A_crit_low + 
+                                    E_prop * E_hosp_low * E_crit_low + 
+                                    VE_prop * VE_hosp_low * VE_crit_low)  
+      Crit_new_high = Cnewdaily * (C_prop * C_hosp_high * C_crit_high + 
+                                     A_prop * A_hosp_high * A_crit_high + 
+                                     E_prop * E_hosp_high * E_crit_high + 
+                                     VE_prop * VE_hosp_high * VE_crit_high)
+      
+      # total critical, is the cumulative of the last crit_time days of new 
+      #   critical
+      Crit_tot_low = rep(0, length(Crit_new_low))
+      Crit_tot_high = Crit_tot_low
+      for (n3 in 1:length(Crit_new_low))
+      {
+        Crit_tot_low[n3] = sum(Crit_new_low[max(1, n3 - crit_time_low):n3])
+        Crit_tot_high[n3] = sum(Crit_new_high[max(1, n3 - crit_time_high):n3]) 
+      }
+      
+      #new deaths - should be lagged
+      Dead_new_low = Cnewdaily * (C_prop * C_death_low + A_prop * A_death_low + 
+                                    E_prop * E_death_low + 
+                                    VE_prop * VE_death_low)  
+      Dead_new_high = Cnewdaily * (C_prop * C_death_high + 
+                                     A_prop * A_death_high + 
+                                     E_prop * E_death_high + 
+                                     VE_prop * VE_death_high) 
+      
+      # total hospitalization, is the cumulative of the last hosp_time days of 
+      #   new hospitalizations
+      Dead_tot_low = cumsum(Dead_new_low)
+      Dead_tot_high = cumsum(Dead_new_high)
+      
+      #save result for each stochastic simulations    
+      dat = round(data.frame(Case_new = Cnewdaily, Case_tot = Ctotdaily[-1], 
+                             Hosp_new_low, Hosp_new_high, Hosp_tot_low, 
+                             Hosp_tot_high, Crit_new_low, Crit_new_high, 
+                             Crit_tot_low, Crit_tot_high, Dead_new_low, 
+                             Dead_new_high, Dead_tot_low, Dead_tot_high))
+      
+      res2[[n2]] = dat    
+      
+    } #end loop over stochastic replicates
+    # save results
+    # res[[n1]] = res2 
+  # } #end loop over scenarios
+
+    attr(res2, "nsims") <- attr(data, "nsims")
+    attr(res2, "start_date") <- attr(data, "start_date")
+    attr(res2, "ndays") <- attr(data, "ndays")
+    
+    return(res2)
+}
+
+summarise_model_hospitalizations <- function(model_res) {
+
+  # read in healthcare parameters file
+  hc_params <- read_csv("Data/hc_params.csv")
+  hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
+                        hc_params$param)
+  # create variables from list of parameters
+  # this is done so as to not have to edit as much of Andreas' code
+  for (i in 1:length(hc_params)) {
+    assign(paste0(names(hc_params)[i]), hc_params[[i]])
+  }
+  
+  # dates for all. Assume hospitalizations are t_delay days delayed from case 
+  #   notifications, critical is same as hospital
+  # deaths should probably be lagged further, are currently not
+  
+  # Dates = seq(from = attr(model_res, "start_date"), 
+  #             to = (attr(model_res, "start_date") + 
+  #                     attr(model_res, "ndays") -1) + death_delay, "days" )
+  Dates = seq(from = attr(model_res, "start_date"), 
+              to = attr(model_res, "start_date") + attr(model_res, "ndays") +
+                death_delay - 1, 
+              "days" )
+  dat = list()
+  # for (n1 in 1:length(sims)) #looping over all scenarios
+  # {
+    # x = res[[n1]] #pull out each scenario
+    x <- model_res
+    for (n2 in 1:length(x)) #loop over all realizations, compute means
+    {
+      if (n2 == 1) xt = x[[n2]] 
+      else xt = xt + x[[n2]]
+    }
+    xt = round(xt / length(x))
+    # run over each outcome column in xt, add to data frame time-shifted 
+    # to account for delays
+    
+    df = array(0, dim = c(length(Dates), ncol(xt))) #empty data frame
+    for (n2 in 1:ncol(xt))
+    {
+      if (n2 < 3) #cases, no time lag
+      { 
+        df[1:nrow(xt), n2] = xt[, n2]
+      }
+      if (n2 > 2 && n2 < 11) #hosp and crit, 7 day time lag
+      { 
+        df[(1 + hosp_delay):(nrow(xt) + hosp_delay), n2] = xt[, n2]
+      }
+      if (n2>10 ) #death, 14 day time lag
+      { 
+        df[(1+death_delay):(nrow(xt)+death_delay),n2] = xt[,n2]
+      }
+    }
+    colnames(df) = colnames(xt)
+    
+    # dat[[n1]] = data.frame(Dates, df)
+    dat <- data.frame(Dates, df)
+    
+    attr(data, "nsims") <- attr(model_res, "nsims")
+    attr(data, "start_date") <- attr(model_res, "start_date")
+    attr(data, "ndays") <- attr(model_res, "ndays")
+    
+    return(dat)
+  # } #end loop over scenarios
+  #write computed results to file
+  # saveRDS(dat,'healthcareresults.rds')
+}
+
+# take the total column and use row differences to get a new cases column
+# use the new cases column to create a delayed exit hospital column
+# combine new cases and exit hospital column to estiamte numbers throughout
+# function created by Justin
+hospital_capacity <- function(res_sum) {
+  
+  # read in healthcare parameters file
+  hc_params <- read_csv("Data/hc_params.csv")
+  hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
+                        hc_params$param)
+  # create variables from list of parameters
+  # this is done so as to not have to edit as much of Andreas' code
+  for (i in 1:length(hc_params)) {
+    assign(paste0(names(hc_params)[i]), hc_params[[i]])
+  }
+  
+  df <- res_sum
+  df$Hosp_case_low <- c(df$Hosp_tot_low[1], diff(df$Hosp_tot_low, 1))
+  df$Hosp_case_high <- c(df$Hosp_tot_high[1], diff(df$Hosp_tot_high, 1))
+  # df$Crit_case_low <- c(df$Crit_tot_low[1], diff(df$Crit_tot_low, 1))
+  # df$Crit_case_high <- c(df$Crit_tot_high[1], diff(df$Crit_tot_high, 1))
+  
+  hosp_time_avg <- round((hosp_time_low + hosp_time_high) / 2)
+  # use hosp_time_avg
+  # limit to hospitalizations for now
+  df$Hosp_exit_low <- c(rep(0, hosp_time_avg), 
+                        df$Hosp_case_low[1:(length(df$Hosp_case_low) - 
+                                              hosp_time_avg)])
+  df$Hosp_exit_high <- c(rep(0, hosp_time_avg), 
+                         df$Hosp_case_high[1:(length(df$Hosp_case_high) - 
+                                                hosp_time_avg)])
+  
+  # new hospital capacity related variable that adds new cases and allows
+  # others to leave along the way
+  # Try it as a loop
+  df$Hosp_capacity_low <- NA
+  df$Hosp_capacity_high <- NA
+  df$Hosp_capacity_low[1] <- df$Hosp_case_low[1]
+  df$Hosp_capacity_high[1] <- df$Hosp_case_high[1]
+  for (i in 2:nrow(df)) {
+    df$Hosp_capacity_low[i] <- df$Hosp_capacity_low[i - 1] +
+      df$Hosp_case_low[i] - df$Hosp_exit_low[i]
+    df$Hosp_capacity_high[i] <- df$Hosp_capacity_high[i - 1] +
+      df$Hosp_case_high[i] - df$Hosp_exit_high[i]
+  }
+  df %<>% filter(Case_tot > 0)
+  return(df)
+}
+
+
+plot_model_hc <- function(res_sum) {
+  
+  res_sum %<>% filter(Case_tot > 0)
+  plotdat <- res_sum %>% pivot_longer(-Dates, names_to = "Setting", 
+                                      values_to = "Numbers" ) 
+  plotdat %<>% mutate(Type = factor(stringr::str_sub(plotdat$Setting, 1, 8),  
+                                    levels = c("Case_new", "Case_tot",
+                                               "Hosp_new", "Hosp_tot",
+                                               "Crit_new", "Crit_tot",
+                                               "Dead_new", "Dead_tot") ) )  
+  plotdat %<>% mutate(H_or_L = as.factor(stringr::str_sub(plotdat$Setting, 10)))
+  pl <- plotdat %>% ggplot() + 
+    geom_line(aes(x = Dates, y = Numbers, color = H_or_L)) + 
+    facet_wrap(~Type, ncol = 2, scales = "free") +
+    theme_bw() +
+    theme(legend.position = "none")
+  #pl <- ggplotly(pl)
+  return(pl)
+}
+
+plot_hospitalizations <- function(res_sum, type = "cum") {
+  
+  # read in up to date hospitalizations file
+  parmc_df <- read_format_hosp()
+
+  # Only plot two weeks into the future
+  parmc_df %<>% filter(AdmitDates <= (Sys.Date() + 14))
+  res_sum %<>% filter(Dates <= (Sys.Date() + 14))
+  
+  # create figure to compare model and actual hospitalizations
+  if (type == "cum") {
+    ggplot() +
+      geom_bar(mapping = aes(x = AdmitDates, y = Number_cum),
+               data = parmc_df, stat = "identity") +
+      geom_line(mapping = aes(x = Dates, y = Hosp_tot_high),
+                data = res_sum) +
+      labs(x = "Dates", y = "Total number of hospitalizations") +
+      theme_classic()
+    
+  } else if (type == "capacity") {
+    ggplot() +
+      geom_bar(mapping = aes(x = AdmitDates, y = HospNum),
+               data = parmc_df, stat = "identity") +
+      geom_line(mapping = aes(x = Dates, y = Hosp_capacity_high),
+                data = res_sum) +
+      labs(x = "Dates", y = "Current number of hospitalized") +
+      theme_classic()
+    
+  } else if (type == "pct") {
+    res_sum %<>% mutate(hosp_pct = Hosp_tot_high / Case_tot)
+    ggplot(mapping = aes(x = Dates, y = hosp_pct), data = res_sum) +
+      geom_line() +
+      labs(x = "Dates", y = "Percent of Cases Hospitalized") +
+      theme_classic()
+    
+  }
+  
+}
+
+read_format_hosp <- function() {
+  
+  df <- read_csv("Data/parmc_hospitalizations.csv")
+  # create file with cumulative cases by date
+  # and number in hospital by date
+  df %<>% mutate(Admit = mdy(Admit),
+                 Discharge = mdy(Discharge))
+  date_span <- c(min(df$Admit), max(df$Admit))
+  AdmitDates <- seq(from = date_span[1], to = date_span[2], by = 1)
+  
+  tmp <- df %>%
+    group_by(Admit) %>%
+    dplyr::summarise(Number = n())
+  
+  out_df <- data.frame(AdmitDates = AdmitDates)
+  out_df %<>% full_join(tmp, by = c("AdmitDates" = "Admit")) %>%
+    mutate(Number = ifelse(is.na(Number), 0, Number))
+  
+  out_df %<>% full_join(df %>%
+                          group_by(Discharge) %>%
+                          dplyr::summarise(DischNumber = n()),
+                        by = c("AdmitDates" = "Discharge")) %>%
+    mutate(DischNumber = ifelse(is.na(DischNumber), 0, DischNumber))
+  
+  out_df %<>% mutate(Number_cum = cumsum(Number),
+                     DischNumber_cum = cumsum(DischNumber))
+  
+  out_df %<>% mutate(HospNum = Number_cum - DischNumber_cum) %>%
+    filter(!is.na(AdmitDates))
+  
+  return(out_df)
+}
