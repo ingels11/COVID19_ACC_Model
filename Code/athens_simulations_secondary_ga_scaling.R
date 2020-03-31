@@ -1,9 +1,7 @@
 rm(list = ls())
 source("Code/model_fncs.R")
 library(ggplot2)
-
-
-
+library(tidyverse)
 
 
 ## Data to be read in that will be used to create raw cumulative counts
@@ -26,11 +24,14 @@ datatwo$newdate <- as.Date(parse_date_time(datatwo$date, "%y/%m/%d"))
 #      lend='butt', xlab='Date', ylab='Case Notifications', main='Case Notifications for Clarke and Surrounding Counties')
 
 library(ggplot2)
-ggplot(data = datatwo, aes(x = newdate, y = total)) +
-  geom_bar(stat = "identity", fill = "black", width=.3) + ylim(0, max(datatwo$total)+1)+
+ggplot(data = datatwo, aes(x = newdate, y = total, label = total)) +
+  geom_bar(stat = "identity", fill = "black", width=.3) +
+  geom_text(data = datatwo, aes(x = newdate, y = total, label = total), 
+            position=position_dodge(width=1), vjust=-1) +
+  scale_y_continuous(breaks = seq(0, max(datatwo$total), by = 20))+
   scale_x_date(breaks = function(x) seq.Date(from = min(x), 
                                              to = max(x)+3, 
-                                             by = "2 days"), date_labels = "%b %d")+
+                                             by = "1 days"), date_labels = "%b %d")+
   labs(title = "Case Notifications for Clarke and Surrounding Counties",
        x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(), 
                                                      plot.title = element_text(size = 22),
