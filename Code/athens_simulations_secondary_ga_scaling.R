@@ -305,7 +305,7 @@ plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date()
 
 estCountRaw = NULL
 for (i in 1:15){
-  estCountRaw[i] = c((outBaselineInt[[i]]$C[841]))
+  estCountRaw[i] = c((outBaselineInt[[i]]$C[nrow(outBaselineInt[[i]])]))
 }
 
 mean(estCountRaw)
@@ -313,20 +313,20 @@ mean(estCountRaw)
 
 estCountRawUpper = NULL
 for (i in 1:15){
-  estCountRawUpper[i] = c((outBaselineUpper[[i]]$C[841]))
+  estCountRawUpper[i] = c((outBaselineUpper[[i]]$C[nrow(outBaselineUpper[[15]])]))
 }
 
 
 finalEstCountSD = NULL
 for (i in 1:15){
-  finalEstCountSD[i] = c((outSD[[i]]$C[841]))
+  finalEstCountSD[i] = c((outSD[[i]]$C[nrow(outSD[[i]])]))
 }
 
 
 
 finalEstCountSDUpp = NULL
 for (i in 1:15){
-  finalEstCountSDUpp[i] = c((outSDUpper[[i]]$C[841]))
+  finalEstCountSDUpp[i] = c((outSDUpper[[i]]$C[nrow(outSDUpper[[i]])]))
 }
 
 
