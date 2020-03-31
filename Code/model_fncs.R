@@ -3,7 +3,7 @@
 # The Georgia simulations are posted here
 # http://2019-coronavirus-tracker.com/stochastic-GA.html
 
-### ----------------------------------------------------------------------------
+### Modelling the Epidemic -----------------------------------------------------
 
 # The function onestep simulates one time step in the transmission process.
 # Called by the function model()
@@ -343,3 +343,4 @@ q <- function(t, w=12, q0=1, q1=1) ifelse(t<=w,q0,q1)
 
 beta <- function(t, w=12, beta0=0.6584, beta.factor=2) ifelse(t<=w,beta0,beta0/beta.factor)
 
+### Modelling the Epidemic -----------------------------------------------------
