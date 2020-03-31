@@ -301,8 +301,8 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='')
   # day <- georgia$date - start
   # lines(day, cumsum(georgia$cases), type='h', col=col.cases, lwd=3, lend='butt' )
   # Switch to ACC real data (acc_df)
-  day <- accdata.date - start
-  lines(day, cumsum(accdata.cases), type = 'h', col = col.cases, 
+  day <- accdata.date - attr(data, "start_date")
+  lines(day, accdata.cases, type = 'h', col = col.cases, 
         lwd = 3, lend = 'butt')
   
   # plot spaghetti
@@ -312,8 +312,8 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='')
   lines(H~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
   lines(C~cum.time,data=data[[1]], col=col.cases.ci, lty=1, lwd=1)
   
-    
-  axis(1, at=seq(0,max.time,5), labels=format(start+seq(0,max.time,5), format= '%b %d'))
+
+  axis(1, at=seq(0,max.time,5), labels=format(attr(data, "start_date")+seq(0,max.time,5), format= '%b %d'))
   axis(2)
   box()
   
