@@ -1,8 +1,14 @@
 rm(list = ls())
 source("Code/model_fncs.R")
 library(ggplot2)
+<<<<<<< HEAD
+library(lubridate)
+library(scales)
+library(readr)
+=======
 library(tidyverse)
 
+>>>>>>> e94724d0a53b3450a4e3ee9aa62a723768157c64
 
 ## Data to be read in that will be used to create raw cumulative counts
 
@@ -13,22 +19,23 @@ datatwo <- data[1:which(data$date == Sys.Date()), ]
 datatwo$total <- rowSums(datatwo[,c(2:17)])
 
 
-library(lubridate)
-library(scales)
-library(ggplot2)
-
 # the important line:
 datatwo$newdate <- as.Date(parse_date_time(datatwo$date, "%y/%m/%d"))
 
 # plot(datatwo$newdate, datatwo$total, type='h', lwd=10, col='rosybrown',
 #      lend='butt', xlab='Date', ylab='Case Notifications', main='Case Notifications for Clarke and Surrounding Counties')
 
+<<<<<<< HEAD
+ggplot(data = datatwo, aes(x = newdate, y = total)) +
+  geom_bar(stat = "identity", fill = "black", width=.3) + ylim(0, max(datatwo$total)+1)+
+=======
 library(ggplot2)
 ggplot(data = datatwo, aes(x = newdate, y = total, label = total)) +
   geom_bar(stat = "identity", fill = "black", width=.3) +
   geom_text(data = datatwo, aes(x = newdate, y = total, label = total), 
             position=position_dodge(width=1), vjust=-1) +
   scale_y_continuous(breaks = seq(0, max(datatwo$total), by = 20))+
+>>>>>>> e94724d0a53b3450a4e3ee9aa62a723768157c64
   scale_x_date(breaks = function(x) seq.Date(from = min(x), 
                                              to = max(x)+3, 
                                              by = "1 days"), date_labels = "%b %d")+
@@ -69,9 +76,6 @@ dailyCases <- read_csv("Data/primSecNewCasesDaily.csv")
 
 dailyCases$secondary <- rowSums(dailyCases[,2:18])
 # NOTE:
-# I only see Morgan county in the secondary service area 
-# Going to stop here for the moment and return to this if more data exists on 
-# those counties
 
 
 dailyCases2 <- dailyCases[1:which(dailyCases$date == as.character(Sys.Date())), ]
@@ -173,7 +177,8 @@ plot.model.acc(outBaselineInt, dailyCases$date[1:which(dailyCases$date == Sys.Da
                dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
                log='y', title='Natural Epidemic (No Social Distancing)')
 
-
+write_rds(outBaselineInt, 
+          paste0("Models/", "epidemic_base_", Sys.Date()))
 
 
 
@@ -256,7 +261,7 @@ plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date())],
                dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
                log='y', title='With Social Distancing')
 
-
+write_rds(outSD, paste0("Models/", "social_distance_base_", Sys.Date()))
 
 
 
