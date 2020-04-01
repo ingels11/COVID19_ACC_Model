@@ -14,7 +14,7 @@ rm(list = ls())
 library(ggplot2)
 knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning=FALSE)
 today <- Sys.Date()
-latest_date <- "2020-03-31"
+latest_date <- "2020-04-01"
 
 source("../Code/model_fncs.R")
 cumCases <- read_csv("../Data/primary and secondary counties cases.csv")
@@ -53,7 +53,7 @@ http://2019-coronavirus-tracker.com/stochastic-GA.html
 
 Three basic models will be presented here. Each has been calibrated to fit the population size, date of the first confirmed case, and likely number of exposed (but not infectious) and infectious persons in the community when that first case was reported. A poor social distancing model will be included as the absolute worst-case scenario, with the basic assumption that the social distancing intervention put into place by Athens-Clarke and Oconnee counties has little to no effect on the spread of the virus (only case isolation after discovering cases). The other two models are calibrated to reduce transmission by 25% (average) and 50% (excellent). 50% is the estimated effect of very effective social distancing (and essentially lockdown) as was seen in some other settings.
 
-The models are limited to showing results over the next two weeks.
+The models are limited to showing results over the next three weeks.
 
 
 ### The Poor Social Distancing Model
