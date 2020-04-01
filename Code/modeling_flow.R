@@ -1,7 +1,7 @@
 # Update the daily county of cases in ACC and sorrounding area
 # writes to "primary and secondary counties cases.csv" and
 #   "primSecNewCasesDaily.csv"
-source("Code/updateDailyCountyCounts.R")
+# source("Code/updateDailyCountyCounts.R")
 
 rm(list = ls())
 source("Code/model_fncs.R")
@@ -25,10 +25,12 @@ latest_date <- "2020-03-31"
 
 # Social distancing works well
 # 15 simulations of the base social distancing model
-base_mod <- read_rds(paste0("Models/social_distance_base_", latest_date))
+base_mod <- read_rds(paste0("Models/social_distance_base_", latest_date, ".rds"))
 base_hosp_mod <- model_hospitalizations(base_mod)
 base_hosp_mod <- summarise_model_hospitalizations(base_hosp_mod)
 base_hosp_mod <- hospital_capacity(base_hosp_mod)
+write_rds(base_hosp_mod, paste0("Models/social_distance_base_hosp_", 
+                                latest_date, ".rds"))
 
 # Plot results
 cumCases <- read_csv("Data/primary and secondary counties cases.csv")
@@ -42,14 +44,16 @@ ggsave(paste0("Plots/exc_socdist_hosp_total_", Sys.Date(), ".png"))
 plot_hospitalizations(base_hosp_mod, type = "capacity",
                       title = "Model with Excellent Social Distancing (Current Hospitalization Count)")
 ggsave(paste0("Plots/exc_socdist_hosp_current_", Sys.Date(), ".png"))
-plot_hospitalizations(base_hosp_mod, type = "pct")
+#plot_hospitalizations(base_hosp_mod, type = "pct")
 
 # Social distancing works not as well
 # 15 simulations of the base social distancing model
-upper_mod <- read_rds(paste0("Models/social_distance_upper_", latest_date))
+upper_mod <- read_rds(paste0("Models/social_distance_upper_", latest_date, ".rds"))
 upper_hosp_mod <- model_hospitalizations(upper_mod)
 upper_hosp_mod <- summarise_model_hospitalizations(upper_hosp_mod)
 upper_hosp_mod <- hospital_capacity(upper_hosp_mod)
+write_rds(upper_hosp_mod, paste0("Models/social_distance_upper_hosp_", 
+                                latest_date, ".rds"))
 
 # Plot results
 plot.model.acc(upper_mod,  cumCases$date, cumCases$secondary,
@@ -63,13 +67,16 @@ ggsave(paste0("Plots/avg_socdist_hosp_current_", Sys.Date(), ".png"))
 
 
 # Natural epidemic
-epid_mod <- read_rds(paste0("Models/epidemic_base_", latest_date))
+epid_mod <- read_rds(paste0("Models/epidemic_base_", latest_date, ".rds"))
 epid_hosp_mod <- model_hospitalizations(epid_mod)
 epid_hosp_mod <- summarise_model_hospitalizations(epid_hosp_mod)
 epid_hosp_mod <- hospital_capacity(epid_hosp_mod)
+write_rds(epid_hosp_mod, paste0("Models/epidemic_base_hosp_", latest_date, ".rds"))
 
-plot.model.acc(epid_mod, cumCases$date, cumCases$secondary,
+acc_natural <- plot.model.acc(epid_mod, cumCases$date, cumCases$secondary,
                log='y', title='Natural Epidemic Model')
+# ggsave(paste0("Plots/Athens_natural_epidemic_", Sys.Date(), ".png"), acc_natural)
+
 plot_hospitalizations(epid_hosp_mod, type = "cum", 
                       title = "Model with Poor Social Distancing (Total Hospitalization Count)")
 ggsave(paste0("Plots/poor_socdist_hosp_total_", Sys.Date(), ".png"))

@@ -57,7 +57,7 @@ for (i in 1:nrow(countyCasesDaily)){
 write.csv(countsToBeUpdated, "Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv", row.names = F)
 
 
-
+detach("package:plyr", unload=TRUE)
 
 
 
@@ -108,7 +108,7 @@ names(newCasesDaily) = names(primSecCounties)
 
 write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())), ], "Data/primSecNewCasesDaily.csv", row.names = F)
 
-
+detach("package:plyr", unload=TRUE)
 
 
 
