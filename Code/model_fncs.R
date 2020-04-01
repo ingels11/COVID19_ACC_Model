@@ -6,6 +6,7 @@ library(dplyr)
 library(magrittr)
 library(readr)
 library(tidyr)
+library(lubridate)
 
 ### Modelling the Epidemic -----------------------------------------------------
 
