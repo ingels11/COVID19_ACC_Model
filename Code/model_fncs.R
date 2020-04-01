@@ -598,7 +598,8 @@ hospital_capacity <- function(res_sum) {
   # df$Crit_case_low <- c(df$Crit_tot_low[1], diff(df$Crit_tot_low, 1))
   # df$Crit_case_high <- c(df$Crit_tot_high[1], diff(df$Crit_tot_high, 1))
   
-  hosp_time_avg <- round((hosp_time_low + hosp_time_high) / 2)
+  # hosp_time_avg <- round((hosp_time_low + hosp_time_high) / 2)
+  hosp_time_avg <- hosp_time_low
   # use hosp_time_avg
   # limit to hospitalizations for now
   df$Hosp_exit_low <- c(rep(0, hosp_time_avg), 
@@ -646,10 +647,12 @@ plot_model_hc <- function(res_sum) {
   return(pl)
 }
 
-plot_hospitalizations <- function(res_sum, title = "", type = "cum") {
+plot_hospitalizations <- function(res_sum, title = "", type = "cum",
+                                  hosp_file = NA) {
   
   # read in up to date hospitalizations file
-  parmc_df <- read_format_hosp()
+  if (is.na(hosp_file)) parmc_df <- read_format_hosp("Data/parmc_hospitalizations.csv")
+  else parmc_df <- read_format_hosp(hosp_file)
 
   # Only plot two weeks into the future
   parmc_df %<>% filter(AdmitDates <= (Sys.Date() + 14))
@@ -688,9 +691,10 @@ plot_hospitalizations <- function(res_sum, title = "", type = "cum") {
   
 }
 
-read_format_hosp <- function() {
+read_format_hosp <- function(hosp_file = NA) {
   
-  df <- read_csv("Data/parmc_hospitalizations.csv")
+  if (is.na(hosp_file)) df <- read_csv("Data/parmc_hospitalizations.csv")
+  else df <- read_csv(hosp_file)
   # create file with cumulative cases by date
   # and number in hospital by date
   df %<>% mutate(Admit = mdy(Admit),
