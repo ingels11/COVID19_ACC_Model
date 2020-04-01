@@ -157,7 +157,7 @@ plot.model.acc(outBaselineInt, cumCases$date, cumCases$secondary,
                log='y', title='Natural Epidemic (No Social Distancing)')
 
 write_rds(outBaselineInt, 
-          paste0("Models/", "epidemic_base_", Sys.Date()))
+          paste0("Models/", "epidemic_base_", Sys.Date(), ".rds"))
 
 
 
@@ -239,7 +239,7 @@ outSD<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
 plot.model.acc(outSD,  cumCases$date, cumCases$secondary,
                log='y', title='With Excellent Social Distancing')
 
-write_rds(outSD, paste0("Models/", "social_distance_base_", Sys.Date()))
+write_rds(outSD, paste0("Models/", "social_distance_base_", Sys.Date(), ".rds"))
 
 
 
@@ -280,8 +280,8 @@ plot.model.acc(outSDUpper, cumCases$date, cumCases$secondary,
                log='y', title='With Average Social Distancing')
 
 
-write_rds(outSDUpper, paste0("Models/", "social_distance_upper_", Sys.Date()))
-
+write_rds(outSDUpper, paste0("Models/", "social_distance_upper_", Sys.Date(), ".rds"))
+browser()
 ## Getting final estimated case count for each scenario
 
 

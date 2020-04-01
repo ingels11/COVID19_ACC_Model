@@ -12,7 +12,7 @@ output:
 ```{r setup, include=FALSE}
 rm(list = ls())
 library(ggplot2)
-knitr::opts_chunk$set(echo = FALSE, cache=TRUE, warning=FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning=FALSE)
 today <- Sys.Date()
 latest_date <- "2020-03-31"
 
@@ -51,16 +51,16 @@ http://2019-coronavirus-tracker.com/stochastic-GA.html
 
 ## The Models
 
-Three basic models will be presented here. Each has been calibrated to fit the population size, date of the first confirmed case, and likely number of exposed (but not infectious) and infectious persons in the community when that first case was reported. A natural epidemic model will be included as the absolute worst-case scenario, with the basic assumption that the social distancing intervention put into place by Athens-Clarke and Oconnee counties has little to no effect on the spread of the virus. The other two models are calibrated to reduce transmission by 25% (average) and 50% (excellent). 50% is the estimated effect of very effective social distancing (and essentially lockdown) as was seen in some other settings.
+Three basic models will be presented here. Each has been calibrated to fit the population size, date of the first confirmed case, and likely number of exposed (but not infectious) and infectious persons in the community when that first case was reported. A poor social distancing model will be included as the absolute worst-case scenario, with the basic assumption that the social distancing intervention put into place by Athens-Clarke and Oconnee counties has little to no effect on the spread of the virus (only case isolation after discovering cases). The other two models are calibrated to reduce transmission by 25% (average) and 50% (excellent). 50% is the estimated effect of very effective social distancing (and essentially lockdown) as was seen in some other settings.
 
 The models are limited to showing results over the next two weeks.
 
 
-### The Natural Epidemic Model
+### The Poor Social Distancing Model
 
 
 ```{r, include=FALSE} 
-epid_mod <- read_rds(paste0("../Models/epidemic_base_", latest_date))
+epid_mod <- read_rds(paste0("../Models/epidemic_base_", latest_date, ".rds"))
 epid_hosp_mod <- read_rds(paste0("../Models/epidemic_base_hosp_", latest_date, ".rds"))
 ```
 
@@ -68,7 +68,7 @@ The following plot predicts the natural epidemic if allowed to spread with no me
 
 ```{r}
 plot.model.acc(epid_mod, cumCases$date, cumCases$secondary,
-               log='y', title='Natural Epidemic Model')
+               log='y', title='Poor Social Distancing Model')
 ```
 
 The total number of hospitalizations over the next two weeks will continue to rise at a steady rate.
@@ -91,7 +91,7 @@ plot_hospitalizations(epid_hosp_mod, type = "capacity",
 
 
 ```{r, include=FALSE} 
-avg_mod <- read_rds(paste0("../Models/social_distance_upper_", latest_date))
+avg_mod <- read_rds(paste0("../Models/social_distance_upper_", latest_date, ".rds"))
 avg_hosp_mod <- read_rds(paste0("../Models/social_distance_upper_hosp_", latest_date, ".rds"))
 ```
 
@@ -102,7 +102,7 @@ plot.model.acc(avg_mod, cumCases$date, cumCases$secondary,
                log='y', title='Model with Average Social Distancing')
 ```
 
-The total hospitalization count ends up roughly half of what would be expected with the natural epidemic.
+The total hospitalization count ends up a little over half of what would be expected with the natural epidemic.
 
 ```{r, message=FALSE}
 plot_hospitalizations(avg_hosp_mod, type = "cum", 
@@ -110,7 +110,7 @@ plot_hospitalizations(avg_hosp_mod, type = "cum",
                       hosp_file = "../Data/parmc_hospitalizations.csv")
 ```
 
-The relative slowing down of the flow of new patients also slows down the number of new hospitalizations which eventually is outweighed by the number of discharges and the current number of patients hospitalized begins to drop in early April after peaking near 30.
+The relative slowing down of the flow of new patients also slows down the number of new hospitalizations and eventually discharges catch up and the current number of patients hospitalized begins to stabilize a littel though does slowly increase to near 45 by mid-April.
 
 ```{r, message=FALSE}
 plot_hospitalizations(avg_hosp_mod, type = "capacity", 
@@ -123,7 +123,7 @@ plot_hospitalizations(avg_hosp_mod, type = "capacity",
 
 
 ```{r, include=FALSE} 
-exc_mod <- read_rds(paste0("../Models/social_distance_base_", latest_date))
+exc_mod <- read_rds(paste0("../Models/social_distance_base_", latest_date, ".rds"))
 exc_hosp_mod <- read_rds(paste0("../Models/social_distance_base_hosp_", latest_date, ".rds"))
 ```
 
@@ -134,7 +134,7 @@ plot.model.acc(exc_mod, cumCases$date, cumCases$secondary,
                log='y', title='Model with Excellent Social Distancing')
 ```
 
-The number of new patients levels off to near zero and there are only sporadic new cases.
+The number of new patients slows and total hospitalizations reaches around 70 by mid-April.
 
 ```{r, message=FALSE}
 plot_hospitalizations(exc_hosp_mod, type = "cum", 
@@ -142,7 +142,7 @@ plot_hospitalizations(exc_hosp_mod, type = "cum",
                       hosp_file = "../Data/parmc_hospitalizations.csv")
 ```
 
-With excellent social distacncing, over the next two weeks the number of hospitalized patients begins to drop in the next few days after peaking at near 25.
+With excellent social distacncing, over the next two weeks the number of hospitalized patients begins to drop after peaking just over 30 early next week.
 
 ```{r, message=FALSE}
 plot_hospitalizations(exc_hosp_mod, type = "capacity", 

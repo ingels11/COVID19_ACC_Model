@@ -432,7 +432,7 @@ model_hospitalizations <- function(data) {
       #this has a few day time lag between a person being diagnosed
       Ctotdaily = y$C[report.times] #total number of cases
       Cnewdaily = diff(Ctotdaily) #daily number of new cases
-      
+      browser()
       # new hospitalizations
       # assuming specific proportions of children/adults/elderly and 
       # associated risks   
