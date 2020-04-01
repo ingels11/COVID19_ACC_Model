@@ -32,7 +32,7 @@ countyCasesDaily = countyCasesDaily[c(-1, -nrow(countyCasesDaily)), -3]
 countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 countsToBeUpdated[is.na(countsToBeUpdated)] <- 0
 names(countsToBeUpdated)[1] = "date"
-countsToBeUpdated$date = as.Date(countsToBeUpdated$date)
+countsToBeUpdated$date = lubridate::mdy(countsToBeUpdated$date)
 
 
 
@@ -70,7 +70,7 @@ detach("package:plyr", unload=TRUE)
 
 
 primSecCounties = read.csv("Data/primary and secondary counties cases.csv")
-primSecCounties$date = data$date
+primSecCounties$date = countsToBeUpdated$date
 primSecCounties[is.na(primSecCounties)] <- 0
 names(primSecCounties)[1] = "date"
 
