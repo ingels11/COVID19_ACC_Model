@@ -30,11 +30,12 @@ countyCasesDaily = countyCasesDaily[c(-1, -nrow(countyCasesDaily)), -3]
 
 # Reading in our working (full) dataset of all counties that we want to populate 
 countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
+
+countsToBeUpdated$date = seq(as.Date("2020-03-14"), as.Date("2020-03-14") + nrow(countsToBeUpdated)-1, by = "1 day")
 countsToBeUpdated[is.na(countsToBeUpdated)] <- 0
 names(countsToBeUpdated)[1] = "date"
-countsToBeUpdated$date = lubridate::mdy(countsToBeUpdated$date)
 
-
+#countsToBeUpdated$date = lubridate::mdy(countsToBeUpdated$date)
 
 
 
@@ -58,7 +59,6 @@ write.csv(countsToBeUpdated, "Data/ACC Healthcare Region Simulation  - Case Coun
 
 
 detach("package:plyr", unload=TRUE)
-
 
 
 
@@ -91,6 +91,7 @@ for (i in 1:nrow(countyCasesDaily)){
 
 write.csv(primSecCounties, "Data/primary and secondary counties cases.csv", row.names = F)
 
+#Gives new daily cases in Clarke and Surrouding
 newCasesDaily = data.frame(matrix(0L, nrow = nrow(primSecCounties), ncol = ncol(primSecCounties)))
 
 for(i in 2:nrow(primSecCounties)) {
