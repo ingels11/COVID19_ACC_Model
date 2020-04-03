@@ -37,7 +37,7 @@ write_rds(base_hosp_mod, paste0("Models/social_distance_base_hosp_",
 cumCases <- read_csv("Data/primary and secondary counties cases.csv")
 cumCases$secondary <- rowSums(cumCases[,2:18])
 #cumCases %<>% filter(date <= Sys.Date())
-cumCases %<>% filter(date <= as.Date("2020-04-02"))
+cumCases %<>% filter(date <= as.Date("2020-04-03"))
 plot.model.acc(base_mod,  cumCases$date, cumCases$secondary,
                log='y', title='Model With Excellent Social Distancing')
 plot_hospitalizations(base_hosp_mod, type = "cum", 
