@@ -30,12 +30,11 @@ countyCasesDaily = countyCasesDaily[c(-1, -nrow(countyCasesDaily)), -3]
 
 # Reading in our working (full) dataset of all counties that we want to populate 
 countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
-
-countsToBeUpdated$date = seq(as.Date("2020-03-14"), as.Date("2020-03-14") + nrow(countsToBeUpdated)-1, by = "1 day")
 countsToBeUpdated[is.na(countsToBeUpdated)] <- 0
 names(countsToBeUpdated)[1] = "date"
 
-#countsToBeUpdated$date = lubridate::mdy(countsToBeUpdated$date)
+
+
 
 
 
@@ -63,6 +62,7 @@ detach("package:plyr", unload=TRUE)
 
 
 
+
 ## This bit of code just goes through and populates counties in the Athens area -- primary and secondary
 ## I guess we could just subset the full working dataset above and indicate which we want, but 
 ## to minimize that work, I just made a CSV file with only the primary / secondary counties and put an 
@@ -70,7 +70,7 @@ detach("package:plyr", unload=TRUE)
 
 
 primSecCounties = read.csv("Data/primary and secondary counties cases.csv")
-primSecCounties$date = countsToBeUpdated$date
+primSecCounties$date = as.Date(countsToBeUpdated$date)
 primSecCounties[is.na(primSecCounties)] <- 0
 names(primSecCounties)[1] = "date"
 
@@ -91,7 +91,6 @@ for (i in 1:nrow(countyCasesDaily)){
 
 write.csv(primSecCounties, "Data/primary and secondary counties cases.csv", row.names = F)
 
-#Gives new daily cases in Clarke and Surrouding
 newCasesDaily = data.frame(matrix(0L, nrow = nrow(primSecCounties), ncol = ncol(primSecCounties)))
 
 for(i in 2:nrow(primSecCounties)) {
