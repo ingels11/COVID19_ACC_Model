@@ -19,7 +19,8 @@ latest_date <- "2020-04-01"
 source("../Code/model_fncs.R")
 cumCases <- read_csv("../Data/primary and secondary counties cases.csv")
 cumCases$secondary <- rowSums(cumCases[,2:18])
-cumCases %<>% filter(date <= Sys.Date())
+# cumCases %<>% filter(date <= Sys.Date())
+cumCases %<>% filter(date <= as.Date("2020-04-02"))
 #  
 # acc_df <- read.csv("../Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 # acc_df[is.na(acc_df)] <- 0
@@ -48,6 +49,15 @@ http://2019-coronavirus-tracker.com/stochastic-model.html
 
 Calibration for Georgia can be found here:  
 http://2019-coronavirus-tracker.com/stochastic-GA.html
+
+```{r}
+ggplot(data = cumCases, mapping = aes(x = date, y = secondary)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Date",
+       y = "Cumulative number of confirmed cases",
+       title = "Growth of Confirmed Cases in the ACC Hospital Service Area") +
+  theme_classic() 
+```
 
 ## The Models
 
