@@ -169,8 +169,8 @@ outBaselineInt <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3
 
 
 
-plot.model.acc(outBaselineInt, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
+plot.model.acc(outBaselineInt, dailyCases2$date[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())],
                log='y', title='Natural Epidemic (No Social Distancing)')
 
 write_rds(outBaselineInt, 
@@ -213,7 +213,7 @@ outBaselineUpper <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i
 
 
 plot.model.acc(outBaselineUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
+               dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())],
                log='y', title='Natural Epidemic (No Social Distancing) Upper Bound')
 
 
@@ -254,7 +254,7 @@ outSD<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())],
+               dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())],
                log='y', title='With Social Distancing')
 
 write_rds(outSD, paste0("Models/", "social_distance_base_", Sys.Date()))
@@ -295,7 +295,7 @@ outSDUpper <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b
                        nsims=15, nstep=NULL, start=start)
 
 plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
-               dailyCases$secondary[1:which(dailyCases$date == Sys.Date())], 
+               dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())], 
                log='y', title='With Social Distancing (Upper Bound)')
 
 
