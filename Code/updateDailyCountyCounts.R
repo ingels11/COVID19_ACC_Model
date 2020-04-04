@@ -30,6 +30,7 @@ countyCasesDaily = countyCasesDaily[c(-1, -nrow(countyCasesDaily)), -3]
 
 # Reading in our working (full) dataset of all counties that we want to populate 
 countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
+countsToBeUpdated$date = as.Date(countsToBeUpdated$date)
 countsToBeUpdated[is.na(countsToBeUpdated)] <- 0
 names(countsToBeUpdated)[1] = "date"
 
