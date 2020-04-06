@@ -248,7 +248,8 @@ plot.model <- function(data, log='y', title=''){
                   'Cumulative reported cases (Model)', 'Cumulative reported cases (Data)'))
 }
 
-plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title=''){
+plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
+                           max.y = NA){
   # The function `plot.model` provides automated visualization of model simulations
   # ACC specific in terms of real data
   # process data
@@ -264,7 +265,7 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='')
   max.time<-data[[1]]$cum.time[max(which(data[[1]]$I>0))] #maximum time in first simulation
   # max.y<-max(data[[1]]$C)       #find max total confirmed cases for plotting range
   # Changing this to max of C, I + Iu, or E to expand y range and capture all information
-  max.y <- max(c(max(data[[1]]$C), max(data[[1]]$I + data[[1]]$Iu), max(data[[1]]$E)))
+  if (is.na(max.y)) max.y <- max(c(max(data[[1]]$C), max(data[[1]]$I + data[[1]]$Iu), max(data[[1]]$E)))
   
   # calculate means
   m1 <- m2 <- m3 <- m4 <- m5 <- matrix(nrow=length(data[[1]]$I), ncol=nsims)
@@ -359,6 +360,26 @@ eta <- function(t, w=12) ifelse(t<=w,1/3,1/3)
 q <- function(t, w=12, q0=1, q1=1) ifelse(t<=w,q0,q1)
 
 beta <- function(t, w=12, beta0=0.6584, beta.factor=2) ifelse(t<=w,beta0,beta0/beta.factor)
+
+return_maxvals <- function(data) {
+  
+  nsims <- length(data)
+  
+  for(i in 1:nsims) data[[i]]$I <- data[[i]]$I1 + data[[i]]$I2 + data[[i]]$I3 +
+      data[[i]]$I4
+  for(i in 1:nsims) data[[i]]$Iu <- data[[i]]$Iu1 + data[[i]]$Iu2 + data[[i]]$Iu3 +
+      data[[i]]$Iu4
+  for(i in 1:nsims) data[[i]]$E <- data[[i]]$E1 + data[[i]]$E2 + data[[i]]$E3 +
+      data[[i]]$E4 + data[[i]]$E5 + data[[i]]$E6
+  
+  max.time<-data[[1]]$cum.time[max(which(data[[1]]$I>0))] #maximum time in first simulation
+  # max.y<-max(data[[1]]$C)       #find max total confirmed cases for plotting range
+  # Changing this to max of C, I + Iu, or E to expand y range and capture all information
+  max.y <- max(c(max(data[[1]]$C), max(data[[1]]$I + data[[1]]$Iu), max(data[[1]]$E)))
+  
+  return(list(max.time = max.time,
+              max.y = max.y))
+}
 
 ### Modelling Healthcare -------------------------------------------------------
 model_hospitalizations <- function(data) {
