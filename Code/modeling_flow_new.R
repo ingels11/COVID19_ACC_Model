@@ -2,6 +2,7 @@
 # writes to "primary and secondary counties cases.csv" and
 #   "primSecNewCasesDaily.csv"
 # source("Code/updateDailyCountyCounts.R")
+# This is being done every day by Ishaan/Nicholas
 
 rm(list = ls())
 source("Code/model_fncs.R")
@@ -22,6 +23,7 @@ library(ggplot2)
 # summarise_model_hospitalizations()
 # hospital_capacity()
 
+# this corresponds to the most recent model run date (see Models folder)
 latest_date <- "2020-04-01"
 
 # Social distancing works well
@@ -37,7 +39,8 @@ write_rds(base_hosp_mod, paste0("Models/social_distance_base_hosp_",
 cumCases <- read_csv("Data/primary and secondary counties cases.csv")
 cumCases$secondary <- rowSums(cumCases[,2:18])
 #cumCases %<>% filter(date <= Sys.Date())
-cumCases %<>% filter(date <= as.Date("2020-04-05"))
+# This corresponds to the most recent reported case information
+cumCases %<>% filter(date <= as.Date("2020-04-08"))
 plot.model.acc(base_mod,  cumCases$date, cumCases$secondary,
                log='y', title='Model With Excellent Social Distancing')
 plot_hospitalizations(base_hosp_mod, type = "cum", 
@@ -86,4 +89,5 @@ plot_hospitalizations(epid_hosp_mod, type = "capacity",
                       title = "Model with Poor Social Distancing (Current Hospitalization Count)")
 ggsave(paste0("Plots/poor_socdist_hosp_current_", Sys.Date(), ".png"))
 
-
+# Now free to run the summary in athens_secondary_summary.Rmd with updated
+# models and case counts

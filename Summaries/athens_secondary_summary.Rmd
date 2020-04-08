@@ -20,7 +20,7 @@ source("../Code/model_fncs.R")
 cumCases <- read_csv("../Data/primary and secondary counties cases.csv")
 cumCases$secondary <- rowSums(cumCases[,2:18])
 # cumCases %<>% filter(date <= Sys.Date())
-cumCases %<>% filter(date <= as.Date("2020-04-06"))
+cumCases %<>% filter(date <= as.Date("2020-04-08"))
 #  
 # acc_df <- read.csv("../Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 # acc_df[is.na(acc_df)] <- 0
