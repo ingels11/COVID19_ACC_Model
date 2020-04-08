@@ -3,18 +3,25 @@
 #   "primSecNewCasesDaily.csv"
 # source("Code/updateDailyCountyCounts.R")
 # This is being done every day by Ishaan/Nicholas
-
+### Setup ----------------------------------------------------------------------
 rm(list = ls())
 source("Code/model_fncs.R")
 library(ggplot2)
 
+cumCases <- read_csv("Data/primary and secondary counties cases.csv")
+cumCases$secondary <- rowSums(cumCases[,2:18])
+#cumCases %<>% filter(date <= Sys.Date())
+# This corresponds to the most recent reported case information
+cumCases %<>% filter(date <= as.Date("2020-04-08"))
+
+
 # run models
-# models found in athens_simulations_secondary_ga_scaling.R
+# models found in acc_report_model_final.R
 # evaluate.model() -> model() -> onestep()
 # save one or more models, will include most up to date counts if 
 #   updateDailyCountyCounts.R has been run
 # Should save model as .rds (with date as part of title) for further processing
-#   * social_distance_base_
+#   * poor_model_DATE.rds, avg_model_DATE.rds, exc_model_DATE.rds
 
 # analyze models
 # run the following functions using the saved .rds files
@@ -24,68 +31,65 @@ library(ggplot2)
 # hospital_capacity()
 
 # this corresponds to the most recent model run date (see Models folder)
-latest_date <- "2020-04-01"
+latest_date <- "2020-04-08"
 
+### Excellent Social Distancing Model ------------------------------------------
 # Social distancing works well
 # 15 simulations of the base social distancing model
-base_mod <- read_rds(paste0("Models/social_distance_base_new_", latest_date, ".rds"))
-base_hosp_mod <- model_hospitalizations(base_mod)
-base_hosp_mod <- summarise_model_hospitalizations(base_hosp_mod)
-base_hosp_mod <- hospital_capacity(base_hosp_mod)
-write_rds(base_hosp_mod, paste0("Models/social_distance_base_hosp_", 
+exc_mod <- read_rds(paste0("Models/exc_model_", latest_date, ".rds"))
+exc_hosp_mod <- model_hospitalizations(exc_mod)
+exc_hosp_mod <- summarise_model_hospitalizations(exc_hosp_mod)
+exc_hosp_mod <- hospital_capacity(exc_hosp_mod)
+write_rds(exc_hosp_mod, paste0("Models/exc_hosp_model_", 
                                 latest_date, ".rds"))
 
 # Plot results
-cumCases <- read_csv("Data/primary and secondary counties cases.csv")
-cumCases$secondary <- rowSums(cumCases[,2:18])
-#cumCases %<>% filter(date <= Sys.Date())
-# This corresponds to the most recent reported case information
-cumCases %<>% filter(date <= as.Date("2020-04-08"))
-plot.model.acc(base_mod,  cumCases$date, cumCases$secondary,
+plot.model.acc(exc_mod,  cumCases$date, cumCases$secondary,
                log='y', title='Model With Excellent Social Distancing')
-plot_hospitalizations(base_hosp_mod, type = "cum", 
+plot_hospitalizations(exc_hosp_mod, type = "cum", 
                       title = "Model with Excellent Social Distancing (Total Hospitalization Count)")
 ggsave(paste0("Plots/exc_socdist_hosp_total_", Sys.Date(), ".png"))
-plot_hospitalizations(base_hosp_mod, type = "capacity",
+plot_hospitalizations(exc_hosp_mod, type = "capacity",
                       title = "Model with Excellent Social Distancing (Current Hospitalization Count)")
 ggsave(paste0("Plots/exc_socdist_hosp_current_", Sys.Date(), ".png"))
-plot_hospitalizations(base_hosp_mod, type = "pct")
+plot_hospitalizations(exc_hosp_mod, type = "pct")
 
+### Average Social Distancing Model --------------------------------------------
 # Social distancing works not as well
 # 15 simulations of the base social distancing model
-upper_mod <- read_rds(paste0("Models/social_distance_base_", latest_date, ".rds"))
-upper_hosp_mod <- model_hospitalizations(upper_mod)
-upper_hosp_mod <- summarise_model_hospitalizations(upper_hosp_mod)
-upper_hosp_mod <- hospital_capacity(upper_hosp_mod)
-write_rds(upper_hosp_mod, paste0("Models/social_distance_upper_hosp_", 
+avg_mod <- read_rds(paste0("Models/avg_model_", latest_date, ".rds"))
+avg_hosp_mod <- model_hospitalizations(avg_mod)
+avg_hosp_mod <- summarise_model_hospitalizations(avg_hosp_mod)
+avg_hosp_mod <- hospital_capacity(avg_hosp_mod)
+write_rds(avg_hosp_mod, paste0("Models/avg_hosp_model_", 
                                 latest_date, ".rds"))
 
 # Plot results
-plot.model.acc(upper_mod,  cumCases$date, cumCases$secondary,
+plot.model.acc(avg_mod,  cumCases$date, cumCases$secondary,
                log='y', title='Model With Average Social Distancing')
-plot_hospitalizations(upper_hosp_mod, type = "cum", 
+plot_hospitalizations(avg_hosp_mod, type = "cum", 
                       title = "Model with Average Social Distancing (Total Hospitalization Count)")
 ggsave(paste0("Plots/avg_socdist_hosp_total_", Sys.Date(), ".png"))
-plot_hospitalizations(upper_hosp_mod, type = "capacity",
+plot_hospitalizations(avg_hosp_mod, type = "capacity",
                       title = "Model with Average Social Distancing (Current Hospitalization Count)")
 ggsave(paste0("Plots/avg_socdist_hosp_current_", Sys.Date(), ".png"))
 
-
+### Poor Social Distancing Model -----------------------------------------------
 # Natural epidemic
-epid_mod <- read_rds(paste0("Models/epidemic_base_", latest_date, ".rds"))
-epid_hosp_mod <- model_hospitalizations(epid_mod)
-epid_hosp_mod <- summarise_model_hospitalizations(epid_hosp_mod)
-epid_hosp_mod <- hospital_capacity(epid_hosp_mod)
-write_rds(epid_hosp_mod, paste0("Models/epidemic_base_hosp_", latest_date, ".rds"))
+poor_mod <- read_rds(paste0("Models/poor_model_", latest_date, ".rds"))
+poor_hosp_mod <- model_hospitalizations(poor_mod)
+poor_hosp_mod <- summarise_model_hospitalizations(poor_hosp_mod)
+poor_hosp_mod <- hospital_capacity(poor_hosp_mod)
+write_rds(poor_hosp_mod, paste0("Models/poor_hosp_model_", latest_date, ".rds"))
 
-acc_natural <- plot.model.acc(epid_mod, cumCases$date, cumCases$secondary,
+acc_natural <- plot.model.acc(poor_mod, cumCases$date, cumCases$secondary,
                log='y', title='Natural Epidemic Model')
 # ggsave(paste0("Plots/Athens_natural_epidemic_", Sys.Date(), ".png"), acc_natural)
 
-plot_hospitalizations(epid_hosp_mod, type = "cum", 
+plot_hospitalizations(poor_hosp_mod, type = "cum", 
                       title = "Model with Poor Social Distancing (Total Hospitalization Count)")
 ggsave(paste0("Plots/poor_socdist_hosp_total_", Sys.Date(), ".png"))
-plot_hospitalizations(epid_hosp_mod, type = "capacity",
+plot_hospitalizations(poor_hosp_mod, type = "capacity",
                       title = "Model with Poor Social Distancing (Current Hospitalization Count)")
 ggsave(paste0("Plots/poor_socdist_hosp_current_", Sys.Date(), ".png"))
 

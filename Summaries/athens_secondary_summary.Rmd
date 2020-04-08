@@ -14,7 +14,7 @@ rm(list = ls())
 library(ggplot2)
 knitr::opts_chunk$set(echo = FALSE, cache=FALSE, warning=FALSE)
 today <- Sys.Date()
-latest_date <- "2020-04-01"
+latest_date <- "2020-04-08"
 
 source("../Code/model_fncs.R")
 cumCases <- read_csv("../Data/primary and secondary counties cases.csv")
@@ -70,10 +70,10 @@ The models are limited to showing results over the next three weeks.
 
 
 ```{r, include=FALSE} 
-epid_mod <- read_rds(paste0("../Models/epidemic_base_", latest_date, ".rds"))
+epid_mod <- read_rds(paste0("../Models/poor_model_", latest_date, ".rds"))
 plot.max.y <- return_maxvals(epid_mod)
 plot.max.y <- plot.max.y[["max.y"]]
-epid_hosp_mod <- read_rds(paste0("../Models/epidemic_base_hosp_", latest_date, ".rds"))
+epid_hosp_mod <- read_rds(paste0("../Models/poor_hosp_model_", latest_date, ".rds"))
 ```
 
 The following plot predicts the natural epidemic if allowed to spread with no measures put into place.
@@ -103,8 +103,8 @@ plot_hospitalizations(epid_hosp_mod, type = "capacity",
 
 
 ```{r, include=FALSE} 
-avg_mod <- read_rds(paste0("../Models/social_distance_upper_", latest_date, ".rds"))
-avg_hosp_mod <- read_rds(paste0("../Models/social_distance_upper_hosp_", latest_date, ".rds"))
+avg_mod <- read_rds(paste0("../Models/avg_model_", latest_date, ".rds"))
+avg_hosp_mod <- read_rds(paste0("../Models/avg_hosp_model_", latest_date, ".rds"))
 ```
 
 The following plot predicts transmission with an average social distancing effect.
@@ -136,8 +136,8 @@ plot_hospitalizations(avg_hosp_mod, type = "capacity",
 
 
 ```{r, include=FALSE} 
-exc_mod <- read_rds(paste0("../Models/social_distance_base_", latest_date, ".rds"))
-exc_hosp_mod <- read_rds(paste0("../Models/social_distance_base_hosp_", latest_date, ".rds"))
+exc_mod <- read_rds(paste0("../Models/exc_model_", latest_date, ".rds"))
+exc_hosp_mod <- read_rds(paste0("../Models/exc_hosp_model_", latest_date, ".rds"))
 ```
 
 The following plot predicts transmission with an excellent social distancing effect.
