@@ -111,5 +111,4 @@ write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())),
 
 detach("package:plyr", unload=TRUE)
 
-quit(save = "no")
 
