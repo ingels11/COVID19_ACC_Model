@@ -113,6 +113,6 @@ detach("package:plyr", unload=TRUE)
 
 # This process will be defined in a function ----
 # It is saved in the location: paste0(getwd(),"/","UpdateGitHub.R")
-source(paste0(getwd(),"/","UpdateGitHub.R"))
+source(paste0(getwd(),"/","Code/UpdateGitHub.R"))
 
 UpdateGitHub()
