@@ -181,5 +181,3 @@ UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, 
   
 }
 
-# Run the function.
-UpdateGitHub()
