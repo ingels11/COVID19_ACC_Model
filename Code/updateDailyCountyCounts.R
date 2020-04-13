@@ -115,3 +115,4 @@ detach("package:plyr", unload=TRUE)
 # It is saved in the location: paste0(getwd(),"/","UpdateGitHub.R")
 source(paste0(getwd(),"/","Code/UpdateGitHub.R"))
 
+UpdateGitHub()
