@@ -229,7 +229,7 @@ UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, 
   # Process the Staged items. Commit them. ----
   if (commit == TRUE) {
     if (!is.null(unlist(status()["staged"]))) {
-      commit(message = paste(Sys.time(), "Update", sep = " - ")) # Generic message, including timestamp.
+      commit(message = paste(format(Sys.Date(), "%m/%d"), format(Sys.time(), "%I:%m %p"), "Update")) # Generic message, including timestamp.
       num2 <- length(unlist(status()["staged"]))
       if (num2 == 0) {
         writeLines(paste0("Items have been Committed."))
@@ -298,4 +298,3 @@ UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, 
 
 # Run the function.
 UpdateGitHub()
-
