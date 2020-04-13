@@ -33,6 +33,7 @@ countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Coun
 countsToBeUpdated$date = as.Date(countsToBeUpdated$date)
 countsToBeUpdated[is.na(countsToBeUpdated)] <- 0
 names(countsToBeUpdated)[1] = "date"
+countsToBeUpdated = countsToBeUpdated[1:which(countsToBeUpdated$date == as.character(Sys.Date())), ]
 
 
 
