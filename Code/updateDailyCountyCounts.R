@@ -16,7 +16,7 @@ tbls <- html_nodes(tables, "table")
 # From looking at the website, the table we want is the 3rd table on the site
 tbls_ls <- tbls %>%
   html_nodes("table") %>%
-  .[6] %>%                    ## Indicating we want the 3rd table
+  .[9] %>%                    ## Indicating we want the 3rd table
   html_table(fill = TRUE)
 
 # Creating a dataframe from the picked table
