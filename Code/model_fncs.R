@@ -248,8 +248,8 @@ plot.model <- function(data, log='y', title=''){
                   'Cumulative reported cases (Model)', 'Cumulative reported cases (Data)'))
 }
 
-plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
-                           max.y = NA){
+plot.model.acc.old <- function(data, accdata.date, accdata.cases, log='y', 
+                               title='', max.y = NA){
   # The function `plot.model` provides automated visualization of model simulations
   # ACC specific in terms of real data
   # process data
@@ -342,6 +342,206 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                   'Cumulative reported cases (Model)', 'Cumulative reported cases (Data)'))
 }
 
+plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
+                           max.y = NA, meanonly = FALSE, trim.days = 0,
+                           include.lines = c("C", "Iso", "Inf", "L")) {
+  # The function `plot.model` provides automated visualization of model simulations
+  # ACC specific in terms of real data
+  # process data
+  nsims <- length(data)
+  
+  for(i in 1:nsims) data[[i]]$I <- data[[i]]$I1 + data[[i]]$I2 + data[[i]]$I3 +
+      data[[i]]$I4
+  for(i in 1:nsims) data[[i]]$Iu <- data[[i]]$Iu1 + data[[i]]$Iu2 + data[[i]]$Iu3 +
+      data[[i]]$Iu4
+  for(i in 1:nsims) data[[i]]$E <- data[[i]]$E1 + data[[i]]$E2 + data[[i]]$E3 +
+      data[[i]]$E4 + data[[i]]$E5 + data[[i]]$E6
+  
+  max.time <- data[[1]]$cum.time[max(which(data[[1]]$I > 0))] #maximum time in first simulation
+  # max.y<-max(data[[1]]$C)       #find max total confirmed cases for plotting range
+  # Changing this to max of C, I + Iu, or E to expand y range and capture all information
+  if (is.na(max.y)) max.y <- max(c(max(data[[1]]$C), 
+                                   max(data[[1]]$I + data[[1]]$Iu), 
+                                   max(data[[1]]$E)))
+  
+  # calculate means
+  m1 <- m2 <- m3 <- m4 <- m5 <- matrix(nrow=length(data[[1]]$I), ncol=nsims)
+  for(i in 1:nsims){
+    m1[,i] <- data[[i]]$E
+    m2[,i] <- data[[i]]$I+data[[i]]$Iu
+    # m3[,i] <- data[[i]]$Iu
+    m4[,i] <- data[[i]]$H
+    m5[,i] <- data[[i]]$C
+  }
+  E.mean <- rowMeans(m1)
+  I.mean <- rowMeans(m2)
+  # Iu.mean <- rowMeans(m3)
+  H.mean <- rowMeans(m4)
+  C.mean <- rowMeans(m5)
+  
+  # colors
+  col.E.ci <- rgb(0,1,0,.25)
+  col.I.ci <- rgb(1,0,0,.25)
+  Iu.col <- rgb(0.5, 0.5, 0, 0.25)
+  col.nowcast.ci <- rgb(0,0,1,.25)
+  col.cases.ci <- rgb(0,0,0,.25)
+  col.E <- rgb(0,1,0,1)
+  col.I <- rgb(1,0,0,1)
+  Iu.mean.col <- rgb(0.5,0.5,0,1)
+  col.nowcast <- rgb(0,0,1,1)
+  col.cases <- rgb(0,0,0,1)
+  
+  #set up plot
+  plt <- ggplot() +
+    labs(x = "",
+         y = "Cases",
+         title = title)
+  # plot(I~cum.time,data=data[[1]],xlab='',ylab='Cases',col=1,
+  #      xlim=c(0,max.time),ylim=c(1,max.y), type='n', lty=1, log=log,
+  #      axes=FALSE, main=title, cex.main=1) # set up plot
+  
+  # add data to plot
+  # day <- georgia$date - start
+  # lines(day, cumsum(georgia$cases), type='h', col=col.cases, lwd=3, lend='butt' )
+  # Switch to ACC real data (acc_df)
+  day <- accdata.date - attr(data, "start_date")
+
+  # plt <- plt +
+  #   geom_col(mapping = aes(accdata.date, accdata.cases), width = 0.5)
+  plt <- plt +
+    geom_col(mapping = aes(seq.int(from = 1, to = length(accdata.cases), 
+                                   by = 1), accdata.cases),
+             width = 0.5)
+  # lines(day, accdata.cases, type = 'h', col = col.cases, 
+  #       lwd = 3, lend = 'butt')
+
+  # plot spaghetti
+  if (!meanonly) {
+    # include.lines = c("C", "Iso", "Inf", "L")
+    if ("L" %in% include.lines) plt <- plt +
+        geom_line(data = data[[1]], mapping = aes(cum.time, E),
+                  color = col.E.ci)
+    if ("Inf" %in% include.lines) plt <- plt +
+        geom_line(data = data[[1]], mapping = aes(cum.time, I + Iu),
+                  color = col.I.ci)
+    if ("Iso" %in% include.lines) plt <- plt +
+        geom_line(data = data[[1]], mapping = aes(cum.time, H),
+                  color = col.nowcast.ci)
+    if ("C" %in% include.lines) plt <- plt +
+        geom_line(data = data[[1]], mapping = aes(cum.time, C),
+                  color = col.cases.ci)
+  }
+  
+
+  # lines(E~cum.time,data=data[[1]], col=col.E.ci, lty=1)
+  # lines(I+Iu~cum.time,data=data[[1]], col=col.I.ci, lty=1)
+  # # lines(Iu~cum.time,data=data[[1]], col=Iu.col, lty=1)
+  # lines(H~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
+  # lines(C~cum.time,data=data[[1]], col=col.cases.ci, lty=1, lwd=1)
+
+  plt <- plt +
+    theme_classic() +
+    scale_x_continuous(breaks = seq.int(0, max.time - trim.days, 5),
+                       limits = c(0, max.time - trim.days),
+                       labels = format(attr(data, "start_date") +
+                                         seq.int(0, max.time - trim.days, 5),
+                                       format = '%b %d')) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    scale_y_continuous(trans = "log2", limits = c(1, 1e4),
+                       breaks = c(1e1, 1e2, 1e3, 1e4))
+
+  # axis(1, at=seq(0,max.time,5), 
+  #      labels=format(attr(data, "start_date")+seq(0,max.time,5), 
+  #                    format= '%b %d'))
+  # axis(2)
+  # box()
+  
+  if (!meanonly) {
+    if (nsims > 1) {
+      for (k in 2:min(100,nsims)) {              #add multiple epidemics to plot
+        
+        if ("L" %in% include.lines) plt <- plt +
+          geom_line(data = data[[k]], mapping = aes(cum.time, E),
+                    color = col.E.ci)
+        if ("Inf" %in% include.lines) plt <- plt +
+          geom_line(data = data[[k]], mapping = aes(cum.time, I + Iu),
+                    color = col.I.ci)
+        if ("Iso" %in% include.lines) plt <- plt +
+          geom_line(data = data[[k]], mapping = aes(cum.time, H),
+                    color = col.nowcast.ci)
+        if ("C" %in% include.lines) plt <- plt +
+          geom_line(data = data[[k]], mapping = aes(cum.time, C),
+                    color = col.cases.ci)
+        
+        # lines(E~cum.time, data=data[[k]], col=col.E.ci, type='l', lty=1)
+        # lines(I+Iu~cum.time, data=data[[k]], col=col.I.ci, type='l', lty=1)
+        # #   lines(Iu~cum.time, data=data[[k]], col=Iu.col, type='l', lty=1)
+        # lines(H~cum.time, data=data[[k]], col=col.nowcast.ci, type='l', lty=1)
+        # lines(C~cum.time, data=data[[k]], col=col.cases.ci, type='l', lty=1, lwd=1)
+      }
+      
+      
+    }
+  }
+  
+  # plot means
+  if ("L" %in% include.lines) plt <- plt +
+    geom_line(data = data[[1]], 
+              mapping = aes(cum.time, E.mean, color = "latent"))
+  if ("Inf" %in% include.lines) plt <- plt +
+    geom_line(data = data[[1]], 
+              mapping = aes(cum.time, I.mean, color = "infectious"))
+  if ("Iso" %in% include.lines) plt <- plt +
+    geom_line(data = data[[1]], 
+              mapping = aes(cum.time, H.mean, color = "isolated"))
+  if ("C" %in% include.lines) plt <- plt +
+    geom_line(data = data[[1]], 
+              mapping = aes(cum.time, C.mean, color = "cases"))
+  # lines(E.mean~cum.time, data=data[[k]], col=col.E, lty=1)
+  # lines(I.mean~cum.time, data=data[[k]], col=col.I, lty=1)  
+  # #  lines(Iu.mean~cum.time, data=data[[k]], col=Iu.mean.col, lty=1)
+  # lines(H.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)
+  # lines(C.mean~cum.time, data=data[[k]], col=col.cases, lty=1)
+  
+  values.vec <- c()
+  labels.vec <- c()
+  if ("L" %in% include.lines) {
+    values.vec <- c(values.vec, "latent" = col.E)
+    labels.vec <- c(labels.vec, "Latent cases in the community")
+  }
+  if ("Inf" %in% include.lines) {
+    values.vec <- c(values.vec, "infectious" = col.I)
+    labels.vec <- c(labels.vec, "Infectious cases in the community")
+  }
+  if ("Iso" %in% include.lines) {
+    values.vec <- c(values.vec, "isolated" = col.nowcast)
+    labels.vec <- c(labels.vec, "Isolated")
+  }
+  if ("C" %in% include.lines) {
+    values.vec <- c(values.vec, "cases" = col.cases)
+    labels.vec <- c(labels.vec, "Cumulative reported cases")
+  }
+  labels.vec <- rev(labels.vec)
+  
+  nrow.val = ifelse(length(include.lines) > 2, 2, 1)
+  
+  plt <- plt +
+    scale_color_manual(name = "",
+                       values = values.vec,
+                       labels = labels.vec) +
+    theme(legend.position = "bottom", legend.justification = "left",
+          legend.spacing.y = unit(0.1, "cm"),
+          legend.key = element_rect(color = "transparent"),
+          plot.title = element_text(size = 10),
+          legend.text = element_text(margin = margin(t = 0, unit = "pt"))) +
+    guides(color = guide_legend(nrow = nrow.val, byrow = TRUE))
+
+ return(plt)
+  # legend('topleft', lty=c(1,1,1,1,1,1), lwd=c(1,1,1,1,3,3), bty='n', cex=0.75,
+  #        col=c(col.E, col.I, col.nowcast, col.cases, 'black'),
+  #        legend=c('Latent cases in the community', 'Infectious cases in the community', 'Isolated', 
+  #                 'Cumulative reported cases (Model)', 'Cumulative reported cases (Data)'))
+}
 
 gamma <- function(z = 12, b=0.143, a0=1/1.5, t){
   # piecewise function

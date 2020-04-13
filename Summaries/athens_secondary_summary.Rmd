@@ -19,8 +19,8 @@ latest_date <- "2020-04-08"
 source("../Code/model_fncs.R")
 cumCases <- read_csv("../Data/primary and secondary counties cases.csv")
 cumCases$secondary <- rowSums(cumCases[,2:18])
-# cumCases %<>% filter(date <= Sys.Date())
-cumCases %<>% filter(date <= as.Date("2020-04-08"))
+cumCases %<>% filter(date <= Sys.Date())
+# cumCases %<>% filter(date <= as.Date("2020-04-08"))
 #  
 # acc_df <- read.csv("../Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 # acc_df[is.na(acc_df)] <- 0
@@ -71,8 +71,8 @@ The models are limited to showing results over the next three weeks.
 
 ```{r, include=FALSE} 
 epid_mod <- read_rds(paste0("../Models/poor_model_", latest_date, ".rds"))
-plot.max.y <- return_maxvals(epid_mod)
-plot.max.y <- plot.max.y[["max.y"]]
+# plot.max.y <- return_maxvals(epid_mod)
+# plot.max.y <- plot.max.y[["max.y"]]
 epid_hosp_mod <- read_rds(paste0("../Models/poor_hosp_model_", latest_date, ".rds"))
 ```
 
@@ -111,8 +111,7 @@ The following plot predicts transmission with an average social distancing effec
 
 ```{r}
 plot.model.acc(avg_mod, cumCases$date, cumCases$secondary,
-               log='y', title='Model with Average Social Distancing',
-               max.y = plot.max.y)
+               log='y', title='Model with Average Social Distancing')
 ```
 
 The total hospitalization count ends up a little over half of what would be expected with the natural epidemic.
@@ -144,8 +143,7 @@ The following plot predicts transmission with an excellent social distancing eff
 
 ```{r}
 plot.model.acc(exc_mod, cumCases$date, cumCases$secondary,
-               log='y', title='Model with Excellent Social Distancing',
-               max.y = plot.max.y)
+               log='y', title='Model with Excellent Social Distancing')
 ```
 
 The number of new patients slows and total hospitalizations reaches around 70 by mid-April.
