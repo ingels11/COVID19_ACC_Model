@@ -1,4 +1,4 @@
-UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, pull=TRUE, push=TRUE) {
+UpdateGitHub <- function(repo, untracked=TRUE, stage=TRUE, commit=TRUE, pull=TRUE, push=TRUE) {
   
   # Input: ----
   # - 'repo' must be an atomic string value which is a valid directory that contains the files for this repository. It will be validated by the rprojroot package.
@@ -56,7 +56,7 @@ UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, 
   if (getwd() == find_rstudio_root_file()) {
     repo <- getwd()
   } else {
-    repo <- find_rstudio_root_file()
+    repo <- "/Users/ishaandave/Box/Random Help Items/COVID19 Git/COVID19_Athens_Model"
   }
   
   # Check if there is anything to do. ####
@@ -82,7 +82,7 @@ UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, 
       for (i in 1:num) {
         writeLines(paste0("    ", i, ": ",unlist(status()["untracked"])[i]))
       }
-      add(repo, unlist(status()["untracked"]))
+      git2r::add(repo, unlist(status()["untracked"]))
       writeLines(paste0("Items have been Staged."))
       commit(message = paste(Sys.time(), "Initial commit", sep = " - "))
       writeLines(paste0("Items have been Committed."))
@@ -93,16 +93,16 @@ UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, 
   
   # Process the Unstaged items. Add them. ----
   if (stage == TRUE) {
-    num <- length(unlist(status()["unstaged"]))
+    num <- length(unlist(status()$unstaged))
     if (num > 0) {
       writeLines(paste0("There are ", num, " Tracked items to be processed."))
       for (i in 1:num) {
-        writeLines(paste0("    ", i, ": ", unlist(status()["unstaged"])[i]))
+        writeLines(paste0("    ", i, ": ", unlist(status()$unstaged)[i]))
       }
     }
-    if (!is.null(unlist(status()["unstaged"]))) {
-      add(repo, unlist(status()["unstaged"]))
-      num2 <- length(unlist(status()["unstaged"]))
+    if (!is.null(unlist(status()$unstaged))) {
+      git2r::add(repo, unlist(status()$unstaged))
+      num2 <- length(unlist(status()$unstaged))
       if (num2 == 0) {
         writeLines(paste0("Items have been Staged."))
       } else if (num == num2) {
