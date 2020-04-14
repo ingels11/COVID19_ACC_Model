@@ -72,9 +72,12 @@ detach("package:plyr", unload=TRUE)
 
 
 primSecCounties = read.csv("Data/primary and secondary counties cases.csv")
-primSecCounties$date = as.Date(countsToBeUpdated$date)
+primSecCounties = primSecCounties[1:which(primSecCounties$date == as.character(Sys.Date())), ]
+# primSecCounties$date = as.Date(countsToBeUpdated$date)
 primSecCounties[is.na(primSecCounties)] <- 0
 names(primSecCounties)[1] = "date"
+
+
 
 
 
@@ -92,6 +95,8 @@ for (i in 1:nrow(countyCasesDaily)){
 
 
 write.csv(primSecCounties, "Data/primary and secondary counties cases.csv", row.names = F)
+
+
 
 newCasesDaily = data.frame(matrix(0L, nrow = nrow(primSecCounties), ncol = ncol(primSecCounties)))
 
