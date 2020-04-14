@@ -71,9 +71,9 @@ detach("package:plyr", unload=TRUE)
 ## indicator variable to tell which kind (include in both primary AND sec or just secondary)
 
 
-primSecCounties = read.csv("Data/primary and secondary counties cases.csv")
+primSecCounties = read.csv("Colquitt_and_surrounding/Data/SW_GA_Counties_daily_counts.csv")
 primSecCounties = primSecCounties[1:which(primSecCounties$date == as.character(Sys.Date())), ]
-# primSecCounties$date = as.Date(countsToBeUpdated$date)
+primSecCounties$date = as.Date(countsToBeUpdated$date)
 primSecCounties[is.na(primSecCounties)] <- 0
 names(primSecCounties)[1] = "date"
 
@@ -94,7 +94,7 @@ for (i in 1:nrow(countyCasesDaily)){
 }
 
 
-write.csv(primSecCounties, "Data/primary and secondary counties cases.csv", row.names = F)
+write.csv(primSecCounties, "Colquitt_and_surrounding/Data/SW_GA_Counties_daily_counts.csv", row.names = F)
 
 
 
@@ -104,14 +104,15 @@ for(i in 2:nrow(primSecCounties)) {
   
   newCasesDaily[,1] = primSecCounties[,1]
   
-  newCasesDaily[i, 2:18] = as.numeric(primSecCounties[i, 2:18]) - as.numeric(primSecCounties[i-1, 2:18])
+  newCasesDaily[i, 2:15] = as.numeric(primSecCounties[i, 2:15]) - as.numeric(primSecCounties[i-1, 2:15])
   
   names(newCasesDaily) = names(primSecCounties)
 }
 
 names(newCasesDaily) = names(primSecCounties)
 
-write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())), ], "Data/primSecNewCasesDaily.csv", row.names = F)
+write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())), ],
+          "Colquitt_and_surrounding/Data/SW_GA_new_cases_daily.csv", row.names = F)
 
 detach("package:plyr", unload=TRUE)
 

@@ -1,5 +1,5 @@
-rm(list = ls())
-source("Code/model_fncs.R")
+cumrm(list = ls())
+source("Colquit_and_surrounding/Code/model_fncs.R")
 library(ggplot2)
 library(lubridate)
 library(scales)
@@ -8,7 +8,7 @@ library(tidyverse)
 
 ## Data to be read in that will be used to create raw cumulative counts
 
-data <- read.csv("Data/primary and secondary counties cases.csv")
+data <- read.csv("Colquitt_and_surrounding/Data/SW_GA_Counties_daily_counts.csv")
 data$date = as_date(data$date)
 datatwo <- data[1:which(data$date == Sys.Date()), ]
 
