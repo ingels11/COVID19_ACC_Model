@@ -1,0 +1,10 @@
+﻿Number,Scenario,beta0,sigma,z,b,a0,w,c,presymptomatic,q0,q1,dt,S,E1,E2,E3,E4,E5,E6,I1,I2,I3,I4,Iu1,Iu2,Iu3,Iu4,H,Ru,C
+1,"1. Natural epidemic with 455 initial infections, no presymptomatic transmission, excellent case ascertainment",0.6584,0.15625,1200,0.143,0.666666667,1200,1,0,1,1,0.05,342902,45,45,45,45,45,46,46,46,46,46,0,0,0,0,0,0,0
+2,"2. Rapid case isolation with 455 initial infections, no presymptomatic transmission, excellent case ascertainment",0.6584,0.15625,0,0.143,0.666666667,1200,1,0,1,1,0.05,342902,45,45,45,45,45,46,46,46,46,46,0,0,0,0,0,0,0
+3,"3. Social distancing with 164 initial infections and no presymptomatic transmission, excellent case ascertainment (added presymptomatic)",0.6584,0.15625,0,0.143,0.666666667,6,1,1,1,1,0.05,342902,16,16,16,16,16,16,17,17,17,17,0,0,0,0,0,0,0
+4,"4. Social distancing with 455 initial infections and no presymptomatic transmission, excellent case ascertainment",0.6584,0.15625,0,0.143,0.666666667,6,1,0,1,1,0.05,342902,45,45,45,45,45,46,46,46,46,46,0,0,0,0,0,0,0
+5,"5. Social distancing with 1164 initial infections and no presymptomatic transmission, excellent case ascertainment (added presymptomatic)",0.6584,0.15625,0,0.143,0.666666667,6,1,1,1,1,0.05,342902,116,116,116,116,116,116,117,117,117,117,0,0,0,0,0,0,0
+6,"6. Natural epidemic with  455 initial infections, presymptomatic transmission, excellent case ascertainment",0.6584,0.15625,1200,0.143,0.666666667,1200,1,1,1,1,0.05,342902,45,45,45,45,45,46,46,46,46,46,0,0,0,0,0,0,0
+7,"7. Rapid case isolation with 455 initial infections, presymptomatic transmission, excellent case ascertainment",0.6584,0.15625,0,0.143,0.666666667,1200,1,1,1,1,0.05,342902,45,45,45,45,45,46,46,46,46,46,0,0,0,0,0,0,0
+8,"8. Social distancing with 455 initial infections and presymptomatic transmission, excellent case ascertainment",0.6584,0.15625,0,0.143,0.666666667,6,1,1,1,1,0.05,342902,45,45,45,45,45,46,46,46,46,46,0,0,0,0,0,0,0
+9,"9. Social distancing with 455 initial infections and presymptomatic transmission, worse case ascertainment",0.6584,0.15625,0,0.143,0.666666667,6,1,1,1,1,0.05,342902,45,45,45,45,45,46,46,46,46,46,0,0,0,0,0,0,0
