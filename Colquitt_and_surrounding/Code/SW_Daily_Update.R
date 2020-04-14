@@ -67,14 +67,11 @@ detach("package:plyr", unload=TRUE)
 
 
 
-library(readr)
-all <- read_csv("Colquitt_and_surrounding/Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
-View(all)
 
 
 keeps <- c("date", "Baker", "Calhoun", "Colquitt", "Decatur", "Dougherty", "Early", 
            "Grady", "Lee", "Miller", "Mitchell", "Seminole", "Terrell", "Thomas", "Worth")
-primSecCounties = all[keeps]
+primSecCounties = countsToBeUpdated[keeps]
 
 
 #primSecCounties = read.csv("Data/primary and secondary counties cases.csv")
@@ -131,8 +128,3 @@ write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())),
 detach("package:plyr", unload=TRUE)
 
 
-# This process will be defined in a function ----
-# It is saved in the location: paste0(getwd(),"/","UpdateGitHub.R")
-source(paste0(getwd(),"/","Code/UpdateGitHub.R"))
-
-UpdateGitHub()
