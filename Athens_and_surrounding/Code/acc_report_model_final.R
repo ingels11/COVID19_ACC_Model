@@ -8,7 +8,7 @@ library(tidyverse)
 
 ## Data to be read in that will be used to create raw cumulative counts
 
-data <- read.csv("Data/primary and secondary counties cases.csv")
+data <- read.csv("Athens_and_surrounding/Data/primary and secondary counties cases.csv")
 data$date = as_date(data$date)
 data_date <- as.Date("2020-04-08")
 datatwo <- data[1:which(data$date == data_date), ]
@@ -69,7 +69,7 @@ ggplot(data = datatwo, aes(x = newdate, y = total, label = total)) +
 
 
 ### Read and Format Athens Cases Data ------------------------------------------
-dailyCases <- read_csv("Data/primSecNewCasesDaily.csv")
+dailyCases <- read_csv("Athens_and_surrounding/Data/primSecNewCasesDaily.csv")
 
 dailyCases$secondary <- rowSums(dailyCases[,2:18])
 # NOTE:
@@ -114,7 +114,7 @@ dailyCases2$secondary_cum <- cumsum(dailyCases2$secondary)
 #     * not using GA scaling, step back one day and go with intermediate method
 #     *   then 9 early cases / 0.11 = 82
 
-scenarios <- read.csv("Data/athens secondary scenarios ga scaling.csv")
+scenarios <- read.csv("Athens_and_surrounding/Data/athens secondary scenarios ga scaling.csv")
 
 scenarios[8, 15:24] = scenarios[7, 15:24] # forgot to update the E's and I's for social distancing 
                                           # This code takes those values from the baseline 
@@ -175,7 +175,7 @@ plot.model.acc(outBaselineInt, dailyCases2$date[1:which(dailyCases$date == Sys.D
                log='y', title='Poor Social Distancing Model')
 
 write_rds(outBaselineInt, 
-          paste0("Models/", "poor_model_", Sys.Date(), ".rds"))
+          paste0("Athens_and_surrounding/Models/", "poor_model_", Sys.Date(), ".rds"))
 
 
 
@@ -258,7 +258,7 @@ plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date())],
                dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())],
                log='y', title='Excellent Social Distancing Model')
 
-write_rds(outSD, paste0("Models/", "exc_model_", Sys.Date(), ".rds"))
+write_rds(outSD, paste0("Athens_and_surrounding/Models/", "exc_model_", Sys.Date(), ".rds"))
 
 
 
@@ -300,7 +300,7 @@ plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date()
                log='y', title='Average Social Distancing Model')
 
 
-write_rds(outSDUpper, paste0("Models/", "avg_model_", Sys.Date(), ".rds"))
+write_rds(outSDUpper, paste0("Athens_and_surrounding/Models/", "avg_model_", Sys.Date(), ".rds"))
 
 ## Getting final estimated case count for each scenario
 
