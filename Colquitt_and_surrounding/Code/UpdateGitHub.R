@@ -125,7 +125,7 @@ UpdateGitHub <- function(repo, untracked=TRUE, stage=TRUE, commit=TRUE, pull=TRU
     }
   }
   
-  
+
   # Do the Pull step. ----
   if (pull == TRUE) {
     pull <- tryCatch ( #tryCatch is utilised because the error message when executing pull() or push() is not very helpful: "too many redirects or authentication replays". The main issue is usually that the credentials are incorrect or missing.
