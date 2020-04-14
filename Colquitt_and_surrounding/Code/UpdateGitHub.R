@@ -84,7 +84,7 @@ UpdateGitHub <- function(repo, untracked=TRUE, stage=TRUE, commit=TRUE, pull=TRU
       }
       git2r::add(repo, unlist(status()["untracked"]))
       writeLines(paste0("Items have been Staged."))
-      commit(message = paste(Sys.time(), "Initial commit", sep = " - "))
+      commit(message = paste(format(Sys.Date(), "%m/%d"), format(Sys.time(), "%I:%M %p"), "Update")) # Generic message, including timestamp.
       writeLines(paste0("Items have been Committed."))
       push(credentials = credentials)
       writeLines(paste0("Items have been Pushed."))
