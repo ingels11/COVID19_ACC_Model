@@ -3,7 +3,7 @@ source("Code/model_fncs.R")
 library(ggplot2)
 
 ### Read and Format Athens Cases Data ------------------------------------------
-acc_df <- read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
+acc_df <- read.csv("Athens_and_surrounding/Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 
 # Secondary service area
 # Athens-Clarke, Oconee, Oglethorpe, Madison, Jackson, Barrow, Walton, 

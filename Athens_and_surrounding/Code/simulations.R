@@ -5,7 +5,7 @@
 # for the Athens area. 
 ### ----------------------------------------------------------------------------
 rm(list = ls())
-source("Code/model_fncs.R")
+source("Athens_and_surrounding/Code/model_fncs.R")
 # Simulations that are included on
 # http://2019-coronavirus-tracker.com/stochastic-GA.html
 

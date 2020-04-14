@@ -6,7 +6,7 @@ today <- Sys.Date()
 start <- as.Date('12/01/2019',format='%m/%d/%Y')
 today.day <- today - start + 1
 #data <- read.csv('/Users/nicholasmallis/Downloads/CountyOne - Sheet1-2.csv')
-data <- read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
+data <- read.csv("Athens_and_surrounding/Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 data <- data[1:10, c(1:6)]
 
 data[,1] <- as.Date(as.character(data[,1]), format='%m-%d-%Y')

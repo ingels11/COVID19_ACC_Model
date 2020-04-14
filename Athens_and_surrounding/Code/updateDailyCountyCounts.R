@@ -29,7 +29,7 @@ countyCasesDaily = countyCasesDaily[c(-1, -nrow(countyCasesDaily)), -3]
 
 
 # Reading in our working (full) dataset of all counties that we want to populate 
-countsToBeUpdated = read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
+countsToBeUpdated = read.csv("Athens_and_surrounding/Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 countsToBeUpdated$date = as.Date(countsToBeUpdated$date)
 countsToBeUpdated[is.na(countsToBeUpdated)] <- 0
 names(countsToBeUpdated)[1] = "date"
@@ -56,7 +56,7 @@ for (i in 1:nrow(countyCasesDaily)){
 }
 
 # Overwriting our working (full) dataset with up to date case numbers for each county in GA
-write.csv(countsToBeUpdated, "Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv", row.names = F)
+write.csv(countsToBeUpdated, "Athens_and_surrounding/Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv", row.names = F)
 
 
 detach("package:plyr", unload=TRUE)
@@ -71,7 +71,7 @@ detach("package:plyr", unload=TRUE)
 ## indicator variable to tell which kind (include in both primary AND sec or just secondary)
 
 
-primSecCounties = read.csv("Data/primary and secondary counties cases.csv")
+primSecCounties = read.csv("Athens_and_surrounding/Data/primary and secondary counties cases.csv")
 primSecCounties = primSecCounties[1:which(primSecCounties$date == as.character(Sys.Date())), ]
 # primSecCounties$date = as.Date(countsToBeUpdated$date)
 primSecCounties[is.na(primSecCounties)] <- 0
@@ -94,7 +94,7 @@ for (i in 1:nrow(countyCasesDaily)){
 }
 
 
-write.csv(primSecCounties, "Data/primary and secondary counties cases.csv", row.names = F)
+write.csv(primSecCounties, "Athens_and_surrounding/Data/primary and secondary counties cases.csv", row.names = F)
 
 
 
@@ -111,7 +111,7 @@ for(i in 2:nrow(primSecCounties)) {
 
 names(newCasesDaily) = names(primSecCounties)
 
-write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())), ], "Data/primSecNewCasesDaily.csv", row.names = F)
+write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())), ], "Athens_and_surrounding/Data/primSecNewCasesDaily.csv", row.names = F)
 
 detach("package:plyr", unload=TRUE)
 
@@ -121,6 +121,6 @@ detach("package:plyr", unload=TRUE)
 
 # This process will be defined in a function ----
 # It is saved in the location: paste0(getwd(),"/","UpdateGitHub.R")
-source(paste0(getwd(),"/","Code/UpdateGitHub.R"))
+source(paste0(getwd(),"/","Athens_and_surrounding/Code/UpdateGitHub.R"))
 
 UpdateGitHub()

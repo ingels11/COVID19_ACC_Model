@@ -6,7 +6,7 @@ library(magrittr)
 latest_date <- "2020-04-01"
 ### Read in and Combine Scenario Models ----------------------------------------
 # Add in marking of peak new cases and hospital capacity by scenario
-poor_df <- read_rds(paste0("Models/epidemic_base_hosp_", 
+poor_df <- read_rds(paste0("Athens_and_surrounding/Models/epidemic_base_hosp_", 
                            latest_date, ".rds")) %>%
   mutate(scenario = "poor")
 poor_df$max_new_hosp <- NA
@@ -16,7 +16,7 @@ poor_df$max_new_hosp[max(which(poor_df$Hosp_new_high == max(poor_df$Hosp_new_hig
 poor_df$max_tot_hosp[max(which(poor_df$Hosp_tot_high == max(poor_df$Hosp_tot_high)))] <- 1
 poor_df$max_new_case[max(which(poor_df$Case_new == max(poor_df$Case_new)))] <- 1
 
-avg_df <- read_rds(paste0("Models/social_distance_upper_hosp_", 
+avg_df <- read_rds(paste0("Athens_and_surrounding/Models/social_distance_upper_hosp_", 
                           latest_date, ".rds")) %>%
   mutate(scenario = "average")
 avg_df$max_new_hosp <- NA
@@ -26,7 +26,7 @@ avg_df$max_new_hosp[max(which(avg_df$Hosp_new_high == max(avg_df$Hosp_new_high))
 avg_df$max_tot_hosp[max(which(avg_df$Hosp_tot_high == max(avg_df$Hosp_tot_high)))] <- 1
 avg_df$max_new_case[max(which(avg_df$Case_new == max(avg_df$Case_new)))] <- 1
 
-exc_df <- read_rds(paste0("Models/social_distance_base_hosp_", 
+exc_df <- read_rds(paste0("Athens_and_surrounding/Models/social_distance_base_hosp_", 
                           latest_date, ".rds")) %>%
   mutate(scenario = "excellent")
 exc_df$max_new_hosp <- NA

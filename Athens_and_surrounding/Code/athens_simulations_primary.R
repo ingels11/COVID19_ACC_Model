@@ -12,7 +12,7 @@ source("Code/model_fncs.R")
 library(ggplot2)
 
 ### Read and Format Athens Cases Data ------------------------------------------
-acc_df <- read.csv("Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
+acc_df <- read.csv("Athens_and_surrounding/Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
 
 # Primary service area
 # Clarke, Oconee, Jackson, Madison, Oglethorpe, Barrow
@@ -66,7 +66,7 @@ ggplot(data = acc_df, mapping = aes(x = Date, y = primary_cum)) +
 #     * not using GA scaling, step back one day and go with intermediate method
 #     *   then 9 early cases / 0.11 = 82
 
-scenarios <- read.csv("Data/athens_scenarios.csv")
+scenarios <- read.csv("Athens_and_surrounding/Data/athens_scenarios.csv")
 # Only the first 8 are currently setup
 # scenarios <- scenarios[c(1:8, 15), ]
 # move columns 11 and 12 to the end
