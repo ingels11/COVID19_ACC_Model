@@ -129,7 +129,7 @@ UpdateGitHub <- function(repo, untracked=TRUE, stage=TRUE, commit=TRUE, pull=TRU
   if (pull == TRUE) {
     pull <- tryCatch ( #tryCatch is utilised because the error message when executing pull() or push() is not very helpful: "too many redirects or authentication replays". The main issue is usually that the credentials are incorrect or missing.
       expr = {
-        pull(credentials = credentials)
+        git2r::pull(credentials = credentials)
       },
       error = function (err) {
         message (paste0("Error when Pulling from GitHub. Try checking your credentials and try again.","\n","Message thrown: "))
