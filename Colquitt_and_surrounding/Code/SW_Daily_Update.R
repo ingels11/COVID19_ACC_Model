@@ -67,7 +67,7 @@ detach("package:plyr", unload=TRUE)
 
 
 
-
+### SW GEORGIA COUNTIES WE WANT TO KEEP/ANALYZE
 
 keeps <- c("date", "Baker", "Calhoun", "Colquitt", "Decatur", "Dougherty", "Early", 
            "Grady", "Lee", "Miller", "Mitchell", "Seminole", "Terrell", "Thomas", "Worth")
@@ -107,7 +107,8 @@ for(i in 2:nrow(primSecCounties)) {
   
   newCasesDaily[,1] = primSecCounties[,1]
   
-  newCasesDaily[i, 2:15] = as.numeric(primSecCounties[i, 2:15]) - as.numeric(primSecCounties[i-1, 2:15])
+  newCasesDaily[i, 2:ncol(primSecCounties)] = as.numeric(primSecCounties[i, 2:ncol(primSecCounties)]) -
+                                              as.numeric(primSecCounties[i-1, 2:ncol(primSecCounties)])
   
   names(newCasesDaily) = names(primSecCounties)
 }
@@ -115,13 +116,8 @@ for(i in 2:nrow(primSecCounties)) {
 names(newCasesDaily) = names(primSecCounties)
 
 #total new cases for SW
-newCasesDaily$NewCaseTotal <- (newCasesDaily$Baker + newCasesDaily$Calhoun + 
-                                 newCasesDaily$Colquitt + newCasesDaily$Decatur +
-                                 newCasesDaily$Dougherty + newCasesDaily$Early +
-                                 newCasesDaily$Grady + newCasesDaily$Lee +
-                                 newCasesDaily$Miller + newCasesDaily$Mitchell +
-                                 newCasesDaily$Seminole + newCasesDaily$Terrell +
-                                 newCasesDaily$Thomas + newCasesDaily$Worth)
+newCasesDaily$NewCaseTotal = rowSums(newCasesDaily[, 2:ncol(newCasesDaily)])
+
 
 write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())), ], "Colquitt_and_surrounding/Data/SW_primSecNewCasesDaily.csv", row.names = F)
 
