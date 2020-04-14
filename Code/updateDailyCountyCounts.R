@@ -109,9 +109,7 @@ for(i in 2:nrow(primSecCounties)) {
   names(newCasesDaily) = names(primSecCounties)
 }
 
-
 names(newCasesDaily) = names(primSecCounties)
-
 
 write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())), ], "Data/primSecNewCasesDaily.csv", row.names = F)
 
