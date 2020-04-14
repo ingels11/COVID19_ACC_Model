@@ -34,7 +34,7 @@ ggplot(data = datatwo, aes(x = newdate, y = total, label = total)) +
   scale_y_continuous(breaks = seq(0, max(datatwo$total), by = 20))+
   scale_x_date(breaks = function(x) seq.Date(from = min(x, na.rm = TRUE),
                                              to = max(x, na.rm = TRUE)+3,
-                                             by = "1 days"), date_labels = "%b %d")+
+                                             by = "3 days"), date_labels = "%b %d")+
   labs(title = "Case Notifications for Clarke and Surrounding Counties",
        x = "Date", y = "Case Notifications") + theme(panel.grid.major = element_blank(),
                                                      plot.title = element_text(size = 22),
