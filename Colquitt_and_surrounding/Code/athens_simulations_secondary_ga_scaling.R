@@ -1,5 +1,5 @@
 cumrm(list = ls())
-source("Colquit_and_surrounding/Code/model_fncs.R")
+source("Colquitt_and_surrounding/Code/model_fncs.R")
 library(ggplot2)
 library(lubridate)
 library(scales)
@@ -8,11 +8,11 @@ library(tidyverse)
 
 ## Data to be read in that will be used to create raw cumulative counts
 
-data <- read.csv("Colquitt_and_surrounding/Data/SW_GA_Counties_daily_counts.csv")
+data <- read.csv("Colquitt_and_surrounding/Data/SW_primary and secondary counties cases.csv")
 data$date = as_date(data$date)
 datatwo <- data[1:which(data$date == Sys.Date()), ]
 
-datatwo$total <- rowSums(datatwo[,c(2:17)])
+datatwo$total <- rowSums(datatwo[,c(2:15)])
 
 
 # the important line:
@@ -68,9 +68,9 @@ ggplot(data = datatwo, aes(x = newdate, y = total, label = total)) +
 
 
 ### Read and Format Athens Cases Data ------------------------------------------
-dailyCases <- read_csv("Data/primSecNewCasesDaily.csv")
+dailyCases <- read_csv("Colquitt_and_surrounding/Data/SW_primSecNewCasesDaily.csv")
 
-dailyCases$secondary <- rowSums(dailyCases[,2:18])
+dailyCases$secondary <- rowSums(dailyCases[,2:15])
 # NOTE:
 
 
@@ -113,7 +113,7 @@ dailyCases2$secondary_cum <- cumsum(dailyCases2$secondary)
 #     * not using GA scaling, step back one day and go with intermediate method
 #     *   then 9 early cases / 0.11 = 82
 
-scenarios <- read.csv("Data/athens secondary scenarios ga scaling.csv")
+scenarios <- read.csv("Colquitt_and_surrounding/Data/SW scenarios.csv")
 
 scenarios[8, 15:24] = scenarios[7, 15:24] # forgot to update the E's and I's for social distancing 
                                           # This code takes those values from the baseline 
