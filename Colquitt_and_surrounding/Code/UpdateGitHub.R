@@ -91,6 +91,7 @@ UpdateGitHub <- function(repo, untracked=TRUE, stage=TRUE, commit=TRUE, pull=TRU
     }
   }
   
+  
   # Process the Unstaged items. Add them. ----
   if (stage == TRUE) {
     num <- length(unlist(status()$unstaged))
