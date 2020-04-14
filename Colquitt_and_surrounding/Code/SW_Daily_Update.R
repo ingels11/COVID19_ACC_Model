@@ -124,3 +124,15 @@ write.csv(newCasesDaily[1:which(newCasesDaily$date == as.character(Sys.Date())),
 detach("package:plyr", unload=TRUE)
 
 
+
+
+library(git2r)
+
+
+getwd()
+setwd("/Users/ishaandave/Box/Random Help Items/COVID19 Git/COVID19_Athens_Model/Colquitt_and_surrounding/Code")
+git2r::config(user.name = "ishaandave",user.email = "ishaandave2@gmail.com")
+gitstatus()
+
+
+Updat
