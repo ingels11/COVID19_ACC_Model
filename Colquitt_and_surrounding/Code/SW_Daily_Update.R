@@ -135,4 +135,4 @@ git2r::config(user.name = "ishaandave",user.email = "ishaandave2@gmail.com")
 gitstatus()
 
 
-Updat
+UpdateGitHub(repo = "/Users/ishaandave/Box/Random Help Items/COVID19 Git/COVID19_Athens_Model")
