@@ -1,0 +1,32 @@
+I created a new modeling function plot.model.acc() and saved hte old function as plot.model.acc.old().
+The original ACC model plotting function was based on Andreas' plot.model() function used for Georgia data.
+The new modeling function switches from using R's built in plot() function to the ggplot2 package.
+I did this for consistency with the hospitalization functions I created and I like ggplot2 better.
+I also added several options to the plotting function so we can customize exactly what we want for the article.
+
+Using plot.model.acc()
+Requires having the model object created by evaluate.model()
+Also utilizes data pulled from the GA DPH website on actual reported cases in the service area
+Arguments
+  * data is a model object from evaluate.model()
+  * accdata.date is a vector of dates from the GA DPH website pulls
+  * accdata.cases is a numeric vector of counts from the GA DPH website pulls (same length as accdata.date)
+  * log was an option if set to "y", converts the y-axis to log scale, depricated and happens automatically now
+  * title is an option to add a title to the top of the figure, defaults to no title
+  * max.y is the maximum value for the y-axis, I set it to 10,000 by default now in the function for consistency across plots
+  * meanonly if set to TRUE will only plot the mean line for each model compartment (rather than all lines from all simulations)
+  * trim.days will trim from the far end (latest dates of the model projection) the number of days passed to the argument, length of the x-axis defaults to the length of the projection passed through the data argument
+  * include.lines defaults to a vector ("L", "Inf", "Iso", "C"), if we choose not to plot one or more of the compartments for the publication figure, a new vector including only the compartments to plot can be passed. Compartments must match those exactly where the 4 listed above are for the Latent, Infectious, Isolated, and cases compartments
+  
+  
+Using plot_hospitalizations()
+Requires an object created by the series of functions:
+  * model_hospitalizations()
+  * summarise_model_hospitalizations()
+  * hospital_capacity()
+Arguments
+  * res_sum is the model object that ultimately comes from hospital_capacity()
+  * type is either "capacity" or "cum" where "capacity" corresponds to the estimated number of hospitalizations each day and "cum" corresponds to the cumulative hospitalizations
+  * title is an option to add a title to the top of the figure, defaults to not title
+  * hosp_file is the path to the PARMC hospitalizations file (or some other file constructed in a similar manner), note that this only includes PARMC hospitalizations, a fairly big limitation to those figures unless we make assumptions about corresponding cases at St. Mary's
+
