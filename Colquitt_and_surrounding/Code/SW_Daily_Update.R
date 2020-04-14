@@ -129,10 +129,6 @@ detach("package:plyr", unload=TRUE)
 library(git2r)
 
 
-getwd()
-setwd("/Users/ishaandave/Box/Random Help Items/COVID19 Git/COVID19_Athens_Model/Colquitt_and_surrounding/Code")
-git2r::config(user.name = "ishaandave",user.email = "ishaandave2@gmail.com")
-gitstatus()
 
 
 UpdateGitHub(repo = "/Users/ishaandave/Box/Random Help Items/COVID19 Git/COVID19_Athens_Model")
