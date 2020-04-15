@@ -215,9 +215,9 @@ plot.model <- function(data, log='y', title=''){
   
   # plot spaghetti
   lines(E~cum.time,data=data[[1]], col=col.E.ci, lty=1)
-  lines(I+Iu~cum.time,data=data[[1]], col=col.I.ci, lty=1)
+  lines(I+Iu~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
   # lines(Iu~cum.time,data=data[[1]], col=Iu.col, lty=1)
-  lines(H~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
+  lines(H~cum.time,data=data[[1]], col=col.I.ci, lty=1)
   lines(C~cum.time,data=data[[1]], col=col.cases.ci, lty=1, lwd=1)
   
   
@@ -236,9 +236,9 @@ plot.model <- function(data, log='y', title=''){
     
     # plot means
     lines(E.mean~cum.time, data=data[[k]], col=col.E, lty=1)
-    lines(I.mean~cum.time, data=data[[k]], col=col.I, lty=1)  
+    lines(I.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)  
     #  lines(Iu.mean~cum.time, data=data[[k]], col=Iu.mean.col, lty=1)
-    lines(H.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)
+    lines(H.mean~cum.time, data=data[[k]], col=col.I, lty=1)
     lines(C.mean~cum.time, data=data[[k]], col=col.cases, lty=1)
   } 
   
@@ -330,9 +330,9 @@ plot.model.acc.old <- function(data, accdata.date, accdata.cases, log='y',
     
     # plot means
     lines(E.mean~cum.time, data=data[[k]], col=col.E, lty=1)
-    lines(I.mean~cum.time, data=data[[k]], col=col.I, lty=1)  
+    lines(I.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)  
     #  lines(Iu.mean~cum.time, data=data[[k]], col=Iu.mean.col, lty=1)
-    lines(H.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)
+    lines(H.mean~cum.time, data=data[[k]], col=col.I, lty=1)
     lines(C.mean~cum.time, data=data[[k]], col=col.cases, lty=1)
   } 
   
@@ -423,10 +423,10 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                   color = col.E.ci)
     if ("Inf" %in% include.lines) plt <- plt +
         geom_line(data = data[[1]], mapping = aes(cum.time, I + Iu),
-                  color = col.I.ci)
+                  color = col.nowcast.ci)
     if ("Iso" %in% include.lines) plt <- plt +
         geom_line(data = data[[1]], mapping = aes(cum.time, H),
-                  color = col.nowcast.ci)
+                  color = col.I.ci)
     if ("C" %in% include.lines) plt <- plt +
         geom_line(data = data[[1]], mapping = aes(cum.time, C),
                   color = col.cases.ci)
@@ -465,10 +465,10 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                     color = col.E.ci)
         if ("Inf" %in% include.lines) plt <- plt +
           geom_line(data = data[[k]], mapping = aes(cum.time, I + Iu),
-                    color = col.I.ci)
+                    color = col.nowcast.ci)
         if ("Iso" %in% include.lines) plt <- plt +
           geom_line(data = data[[k]], mapping = aes(cum.time, H),
-                    color = col.nowcast.ci)
+                    color = col.I.ci)
         if ("C" %in% include.lines) plt <- plt +
           geom_line(data = data[[k]], mapping = aes(cum.time, C),
                     color = col.cases.ci)
@@ -510,11 +510,11 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
     labels.vec <- c(labels.vec, "Latent cases in the community")
   }
   if ("Inf" %in% include.lines) {
-    values.vec <- c(values.vec, "infectious" = col.I)
+    values.vec <- c(values.vec, "infectious" = col.nowcast)
     labels.vec <- c(labels.vec, "Infectious cases in the community")
   }
   if ("Iso" %in% include.lines) {
-    values.vec <- c(values.vec, "isolated" = col.nowcast)
+    values.vec <- c(values.vec, "isolated" = col.I)
     labels.vec <- c(labels.vec, "Isolated")
   }
   if ("C" %in% include.lines) {
@@ -532,7 +532,7 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
     theme(legend.position = "bottom", legend.justification = "left",
           legend.spacing.y = unit(0.1, "cm"),
           legend.key = element_rect(color = "transparent"),
-          plot.title = element_text(size = 10),
+          plot.title = element_text(size = 14),
           legend.text = element_text(margin = margin(t = 0, unit = "pt"))) +
     guides(color = guide_legend(nrow = nrow.val, byrow = TRUE))
 
