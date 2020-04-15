@@ -35,7 +35,10 @@ countyCasesDaily = countyCasesDaily[c(-1, -nrow(countyCasesDaily)), -3]
 
 # Reading in our working (full) dataset of all counties that we want to populate 
 countsToBeUpdated = read.csv("Colquitt_and_surrounding/Data/ACC Healthcare Region Simulation  - Case Counts by County GA.csv")
-countsToBeUpdated$date = as.Date(countsToBeUpdated$date)
+dat2 <- data.frame(matrix(nrow = 25, ncol = ncol(countsToBeUpdated)))
+names(dat2) = names(countsToBeUpdated)
+countsToBeUpdated = bind_rows(countsToBeUpdated, dat2)
+countsToBeUpdated$date = seq(as.Date("2020-03-14"), as.Date("2020-03-14")+nrow(countsToBeUpdated)-1, by = "1 day")
 countsToBeUpdated[is.na(countsToBeUpdated)] <- 0
 names(countsToBeUpdated)[1] = "date"
 countsToBeUpdated = countsToBeUpdated[1:which(countsToBeUpdated$date == as.character(Sys.Date())), ]
