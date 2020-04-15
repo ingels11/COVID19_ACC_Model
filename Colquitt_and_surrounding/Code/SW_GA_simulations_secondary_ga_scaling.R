@@ -424,26 +424,39 @@ for (i in 1:15){
   estCountRaw[i] = c((outBaselineInt[[i]]$C[nrow(outBaselineInt[[i]])]))
 }
 
-mean(estCountRaw)
 
 
-estCountRawUpper = NULL
+
+finalEstCountSDearly = NULL
 for (i in 1:15){
-  estCountRawUpper[i] = c((outBaselineUpper[[i]]$C[nrow(outBaselineUpper[[15]])]))
+  finalEstCountSDearly[i] = c((outSDearly[[i]]$C[nrow(outSDearly[[i]])]))
 }
 
 
-finalEstCountSD = NULL
+finalEstCountSDearlyUpp = NULL
 for (i in 1:15){
-  finalEstCountSD[i] = c((outSD[[i]]$C[nrow(outSD[[i]])]))
+  finalEstCountSDearlyUpp[i] = c((outSDearlyUpper[[i]]$C[nrow(outSDearlyUpper[[i]])]))
 }
 
 
 
-finalEstCountSDUpp = NULL
+
+finalEstCountSDlate= NULL
 for (i in 1:15){
-  finalEstCountSDUpp[i] = c((outSDUpper[[i]]$C[nrow(outSDUpper[[i]])]))
+  finalEstCountSDlate[i] = c((outSDlate[[i]]$C[nrow(outSDlate[[i]])]))
 }
+
+ceiling(c(mean(estCountRaw), mean(finalEstCountSDearly), mean(finalEstCountSDearlyUpp),
+          mean(finalEstCountSDlate), mean(finalEstCountSDlateUpp)))
+
+
+finalEstCountSDlateUpp = NULL
+for (i in 1:15){
+  finalEstCountSDlateUpp[i] = c((outSDlateUpper[[i]]$C[nrow(outSDlateUpper[[i]])]))
+}
+
+mean(finalEstCountSDlateUpp)
+
 
 
 ceiling(c(mean(estCountRaw), mean(estCountRawUpper), mean(finalEstCountSD), mean(finalEstCountSDUpp)))
