@@ -174,7 +174,7 @@ plot.model.acc(outBaselineInt, dailyCases2$date[1:which(dailyCases$date == Sys.D
                log='y', title='Natural Epidemic (No Social Distancing)')
 
 write_rds(outBaselineInt, 
-          paste0("Models/", "epidemic_base_", Sys.Date()-1))
+          paste0("Colquitt_and_surrounding/Models/", "epidemic_base_", Sys.Date()-1))
 
 
 
@@ -258,7 +258,7 @@ plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)]
                dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date()-1)],
                log='y', title='With Social Distancing')
 
-write_rds(outSD, paste0("Models/", "social_distance_base_", Sys.Date()-1))
+write_rds(outSD, paste0("Colquitt_and_surrounding/Models/", "social_distance_base_", Sys.Date()-1))
 
 
 
@@ -301,7 +301,7 @@ plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date()
                log='y', title='With Social Distancing (Upper Bound)')
 
 
-write_rds(outSDUpper, paste0("Models/", "social_distance_upper_", Sys.Date()-1))
+write_rds(outSDUpper, paste0("Colquitt_and_surrounding/Models/", "social_distance_upper_", Sys.Date()-1))
 
 
 
@@ -355,7 +355,7 @@ plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date()-1)]
                dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date()-1)],
                log='y', title='With Social Distancing')
 
-write_rds(outSD, paste0("Models/", "social_distance_base_", Sys.Date()-1))
+write_rds(outSD, paste0("Colquitt_and_surrounding/Models/", "social_distance_base_", Sys.Date()-1))
 
 
 
