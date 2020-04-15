@@ -132,7 +132,7 @@ evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143,
                            nsims=2, nstep=NULL, start=as.Date("2020-03-14"),today=Sys.Date()){
 
   #run simulation from start to current time plus four weeks
-  forward_days <- 28
+  forward_days <- 42
   if(is.null(nstep)) nstep <- (as.numeric(today - start) + 1 + forward_days) / 
       params$dt 
   
@@ -381,14 +381,14 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
   
   # colors
   col.E.ci <- rgb(0,1,0,.25)
-  col.I.ci <- rgb(1,0,0,.25)
+  col.I.ci <- rgb(0,0,1,.25)           
   Iu.col <- rgb(0.5, 0.5, 0, 0.25)
-  col.nowcast.ci <- rgb(0,0,1,.25)
+  col.nowcast.ci <- rgb(1,0,0,.25)
   col.cases.ci <- rgb(0,0,0,.25)
   col.E <- rgb(0,1,0,1)
-  col.I <- rgb(1,0,0,1)
+  col.I <- rgb(0,0,1,1) 
   Iu.mean.col <- rgb(0.5,0.5,0,1)
-  col.nowcast <- rgb(0,0,1,1)
+  col.nowcast <- rgb(1,0,0,1)
   col.cases <- rgb(0,0,0,1)
   
   #set up plot
@@ -447,8 +447,8 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                                          seq.int(0, max.time - trim.days, 5),
                                        format = '%b %d')) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    scale_y_continuous(trans = "log2", limits = c(1, 1e4),
-                       breaks = c(1e1, 1e2, 1e3, 1e4))
+    scale_y_continuous(trans = "log2", limits = c(1, 1e5),
+                       breaks = c(1e1, 1e2, 1e3, 1e4, 1e5))
 
   # axis(1, at=seq(0,max.time,5), 
   #      labels=format(attr(data, "start_date")+seq(0,max.time,5), 
