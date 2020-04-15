@@ -131,12 +131,7 @@ scenarios <- scenarios[c(1:9), ]
 scenarios <- scenarios[, c(1:10, 13:31, 11, 12)]
 
 
-### Baseline Model (Scenario 7) ------------------------------------------------
-# out.base <- evaluate.model(params=list(beta0=0.6584, sigma=1/6.4, z=0, b=0.143, a0=1/1.5, w=100, c=1, presymptomatic=1, dt=0.05),
-#                                  init = list(S=447451, E1=ei, E2=ei, E3=ei, E4=ei, E5=ei, E6=ei,
-#                                              I1 = ii, I2= ii, I3=ii, I4=ii, Iu1=0, Iu2=0, Iu3=0, Iu4=0,
-#                                              H=0, Ru=0, C=0),
-#                                  nsims=15, nstep=NULL, start=as.Date("2020-03-01"))
+### Baseline, natural epidemic -- no interventions
 
 scen_row <- 7
 
@@ -180,7 +175,7 @@ write_rds(outBaselineInt,
 
 
 
-
+### Upper bound of natural epidemic
 scen_row <- 9
 
 # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
@@ -223,8 +218,8 @@ plot.model.acc(outBaselineUpper, dailyCases$date[1:which(dailyCases$date == Sys.
 
 
 
-### EARLY INTERVENTION 
-## Assuming whole area shelter-in-place order on March 21 (when Dougherty county did) 
+### Social Distancing implemented -- early intervention  
+## This model ssuming whole area put shelter-in-place order on March 21 (when Dougherty county did) 
 
 scen_row <- 8
 
@@ -265,8 +260,9 @@ write_rds(outSD, paste0("Colquitt_and_surrounding/Models/", "social_distance_bas
 
 
 
-## Baseline Upper Bound Social Distancing (same as 8 but social distancing is worse)
+## Social Distancing Upper Bound (poor social distancing)
 ## Shelter in place order on March 21
+
 scen_row <- 8
 
 # Too stringent, earlier assumptions likely make more sense
@@ -321,8 +317,9 @@ write_rds(outSDUpper, paste0("Colquitt_and_surrounding/Models/", "social_distanc
 
 
 
+## Social Distancing implemented late
+## Assumes all counties followed Governor Kemp's shelter in place order on 4/2
 
-## Assuming area followed homeboy Kemp's shelter in place order on 4/2
 scen_row <- 8
 
 # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
@@ -362,8 +359,8 @@ write_rds(outSD, paste0("Colquitt_and_surrounding/Models/", "social_distance_bas
 
 
 
-## Baseline Upper Bound Social Distancing (same as 8 but social distancing is worse)
-## Shelter in place on 4/2
+## Social Distancing Upper Bound (social distancing done poorly)
+## Shelter in place on 4/2 (Kemp's date)
 scen_row <- 8
 
 # Too stringent, earlier assumptions likely make more sense
