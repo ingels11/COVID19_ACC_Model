@@ -215,9 +215,6 @@ plot.model.acc(outBaselineUpper, dailyCases$date[1:which(dailyCases$date == Sys.
 
 
 
-
-
-
 ### Social Distancing implemented -- early intervention  
 ## This model ssuming whole area put shelter-in-place order on March 21 (when Dougherty county did) 
 
@@ -243,17 +240,17 @@ beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "bet
 
 s <- scenarios[,3:31]
 i <- scen_row
-outSD<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+outSDearly<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+plot.model.acc(outSDearly,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
                dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())],
-               log='y', title='With Social Distancing')
+               log='y', title='Social Distancing 3/21 (Baseline)')
 
-write_rds(outSD, paste0("Colquitt_and_surrounding/Models/", "social_distance_base_", Sys.Date()))
+write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "social_distance_base_", Sys.Date()))
 
 
 
@@ -286,18 +283,18 @@ beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "bet
 
 s <- scenarios[,3:31]
 i <- scen_row
-outSDUpper <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+outSDearlyUpper <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+plot.model.acc(outSDearlyUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
                dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())], 
-               log='y', title='With Social Distancing (Upper Bound)')
+               log='y', title='Social Distancing 3/21 (Upper Bound)')
 
 
-write_rds(outSDUpper, paste0("Colquitt_and_surrounding/Models/", "social_distance_upper_", Sys.Date()))
+write_rds(outSDearlyUpper, paste0("Colquitt_and_surrounding/Models/", "social_distance_upper_", Sys.Date()))
 
 
 
@@ -342,17 +339,17 @@ beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "bet
 
 s <- scenarios[,3:31]
 i <- scen_row
-outSD<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=19, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+outSDlate<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=19, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(outSD,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+plot.model.acc(outSDlate,  dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
                dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())],
-               log='y', title='With Social Distancing')
+               log='y', title='Social Distancing 4/2 (Baseline)')
 
-write_rds(outSD, paste0("Colquitt_and_surrounding/Models/", "social_distance_base_", Sys.Date()))
+write_rds(outSDlate, paste0("Colquitt_and_surrounding/Models/", "social_distance_base_", Sys.Date()))
 
 
 
@@ -384,18 +381,18 @@ beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "bet
 
 s <- scenarios[,3:31]
 i <- scen_row
-outSDUpper <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=19, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+outSDlateUpper <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=19, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
                              init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
                                          I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
                                          H=s[i,25], Ru=s[i,26], C=s[i,27]),
                              nsims=15, nstep=NULL, start=start)
 
-plot.model.acc(outSDUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
+plot.model.acc(outSDlateUpper, dailyCases$date[1:which(dailyCases$date == Sys.Date())], 
                dailyCases2$secondary_cum[1:which(dailyCases$date == Sys.Date())], 
-               log='y', title='With Social Distancing (Upper Bound)')
+               log='y', title='Social Distancing 4/2 (Upper Bound)')
 
 
-write_rds(outSDUpper, paste0("Colquitt_and_surrounding/Models/", "social_distance_upper_", Sys.Date()))
+write_rds(outSDlateUpper, paste0("Colquitt_and_surrounding/Models/", "social_distance_upper_", Sys.Date()))
 
 
 

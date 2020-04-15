@@ -344,7 +344,7 @@ plot.model.acc.old <- function(data, accdata.date, accdata.cases, log='y',
 
 plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                            max.y = NA, meanonly = FALSE, trim.days = 0,
-                           include.lines = c("C", "Iso", "Inf", "L")) {
+                           include.lines = c("C", "Inf", "Iso", "L")) {
   # The function `plot.model` provides automated visualization of model simulations
   # ACC specific in terms of real data
   # process data
@@ -423,10 +423,10 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                   color = col.E.ci)
     if ("Inf" %in% include.lines) plt <- plt +
         geom_line(data = data[[1]], mapping = aes(cum.time, I + Iu),
-                  color = col.nowcast.ci)
+                  color = col.I.ci)
     if ("Iso" %in% include.lines) plt <- plt +
         geom_line(data = data[[1]], mapping = aes(cum.time, H),
-                  color = col.I.ci)
+                  color = col.nowcast.ci)
     if ("C" %in% include.lines) plt <- plt +
         geom_line(data = data[[1]], mapping = aes(cum.time, C),
                   color = col.cases.ci)
@@ -490,10 +490,10 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
               mapping = aes(cum.time, E.mean, color = "latent"))
   if ("Inf" %in% include.lines) plt <- plt +
     geom_line(data = data[[1]], 
-              mapping = aes(cum.time, I.mean, color = "infectious"))
+              mapping = aes(cum.time, I.mean, color = "isolated"))
   if ("Iso" %in% include.lines) plt <- plt +
     geom_line(data = data[[1]], 
-              mapping = aes(cum.time, H.mean, color = "isolated"))
+              mapping = aes(cum.time, H.mean, color = "infectious"))
   if ("C" %in% include.lines) plt <- plt +
     geom_line(data = data[[1]], 
               mapping = aes(cum.time, C.mean, color = "cases"))
@@ -510,11 +510,11 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
     labels.vec <- c(labels.vec, "Latent cases in the community")
   }
   if ("Inf" %in% include.lines) {
-    values.vec <- c(values.vec, "infectious" = col.nowcast)
+    values.vec <- c(values.vec, "infectious" = col.I)
     labels.vec <- c(labels.vec, "Infectious cases in the community")
   }
   if ("Iso" %in% include.lines) {
-    values.vec <- c(values.vec, "isolated" = col.I)
+    values.vec <- c(values.vec, "isolated" = col.nowcast)
     labels.vec <- c(labels.vec, "Isolated")
   }
   if ("C" %in% include.lines) {
