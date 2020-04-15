@@ -12,7 +12,7 @@ cumCases <- read_csv("Data/primary and secondary counties cases.csv")
 cumCases$secondary <- rowSums(cumCases[, 2:18])
 #cumCases %<>% filter(date <= Sys.Date())
 # This corresponds to the most recent reported case information
-cumCases %<>% filter(date <= as.Date("2020-04-08"))
+cumCases %<>% filter(date <= as.Date("2020-04-13"))
 
 
 # run models
