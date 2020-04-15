@@ -110,7 +110,7 @@ onestep <- function (x, params) {
 # Called by the function evaluate.model()
 model <- function (x, params, nstep) {  #function to simulate stochastic SIR
   output <- array(dim=c(nstep+1,length(x)))         #set up array to store results
-
+  
   colnames(output) <- c("time","S",
                         "E1", "E2", "E3", "E4", "E5", "E6",
                         "I1", "I2", "I3", "I4", "Iu1", "Iu2", "Iu3", "Iu4",
@@ -130,7 +130,7 @@ evaluate.model <- function(params=list(beta0=0.6584, sigma=1/6.4, z=12, b=0.143,
                                        I1 = 1, I2= 0, I3=0, I4=0, Iu1=0, Iu2=0, Iu3=0, Iu4=0,
                                        H=0, Ru=0, C=0),
                            nsims=2, nstep=NULL, start=as.Date("2020-03-14"),today=Sys.Date()){
-
+  
   #run simulation from start to current time plus four weeks
   forward_days <- 42
   if(is.null(nstep)) nstep <- (as.numeric(today - start) + 1 + forward_days) / 
@@ -215,9 +215,9 @@ plot.model <- function(data, log='y', title=''){
   
   # plot spaghetti
   lines(E~cum.time,data=data[[1]], col=col.E.ci, lty=1)
-  lines(I+Iu~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
+  lines(I+Iu~cum.time,data=data[[1]], col=col.I.ci, lty=1)
   # lines(Iu~cum.time,data=data[[1]], col=Iu.col, lty=1)
-  lines(H~cum.time,data=data[[1]], col=col.I.ci, lty=1)
+  lines(H~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
   lines(C~cum.time,data=data[[1]], col=col.cases.ci, lty=1, lwd=1)
   
   
@@ -236,9 +236,9 @@ plot.model <- function(data, log='y', title=''){
     
     # plot means
     lines(E.mean~cum.time, data=data[[k]], col=col.E, lty=1)
-    lines(I.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)  
+    lines(I.mean~cum.time, data=data[[k]], col=col.I, lty=1)  
     #  lines(Iu.mean~cum.time, data=data[[k]], col=Iu.mean.col, lty=1)
-    lines(H.mean~cum.time, data=data[[k]], col=col.I, lty=1)
+    lines(H.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)
     lines(C.mean~cum.time, data=data[[k]], col=col.cases, lty=1)
   } 
   
@@ -314,7 +314,7 @@ plot.model.acc.old <- function(data, accdata.date, accdata.cases, log='y',
   lines(H~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
   lines(C~cum.time,data=data[[1]], col=col.cases.ci, lty=1, lwd=1)
   
-
+  
   axis(1, at=seq(0,max.time,5), labels=format(attr(data, "start_date")+seq(0,max.time,5), format= '%b %d'))
   axis(2)
   box()
@@ -330,9 +330,9 @@ plot.model.acc.old <- function(data, accdata.date, accdata.cases, log='y',
     
     # plot means
     lines(E.mean~cum.time, data=data[[k]], col=col.E, lty=1)
-    lines(I.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)  
+    lines(I.mean~cum.time, data=data[[k]], col=col.I, lty=1)  
     #  lines(Iu.mean~cum.time, data=data[[k]], col=Iu.mean.col, lty=1)
-    lines(H.mean~cum.time, data=data[[k]], col=col.I, lty=1)
+    lines(H.mean~cum.time, data=data[[k]], col=col.nowcast, lty=1)
     lines(C.mean~cum.time, data=data[[k]], col=col.cases, lty=1)
   } 
   
@@ -344,7 +344,7 @@ plot.model.acc.old <- function(data, accdata.date, accdata.cases, log='y',
 
 plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                            max.y = NA, meanonly = FALSE, trim.days = 0,
-                           include.lines = c("C", "Inf", "Iso", "L")) {
+                           include.lines = c("C", "Iso", "Inf", "L")) {
   # The function `plot.model` provides automated visualization of model simulations
   # ACC specific in terms of real data
   # process data
@@ -381,14 +381,14 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
   
   # colors
   col.E.ci <- rgb(0,1,0,.25)
-  col.I.ci <- rgb(0,0,1,.25)           
+  col.I.ci <- rgb(1,0,0,.25)
   Iu.col <- rgb(0.5, 0.5, 0, 0.25)
-  col.nowcast.ci <- rgb(1,0,0,.25)
+  col.nowcast.ci <- rgb(0,0,1,.25)
   col.cases.ci <- rgb(0,0,0,.25)
   col.E <- rgb(0,1,0,1)
-  col.I <- rgb(0,0,1,1) 
+  col.I <- rgb(1,0,0,1)
   Iu.mean.col <- rgb(0.5,0.5,0,1)
-  col.nowcast <- rgb(1,0,0,1)
+  col.nowcast <- rgb(0,0,1,1)
   col.cases <- rgb(0,0,0,1)
   
   #set up plot
@@ -405,7 +405,7 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
   # lines(day, cumsum(georgia$cases), type='h', col=col.cases, lwd=3, lend='butt' )
   # Switch to ACC real data (acc_df)
   day <- accdata.date - attr(data, "start_date")
-
+  
   # plt <- plt +
   #   geom_col(mapping = aes(accdata.date, accdata.cases), width = 0.5)
   plt <- plt +
@@ -414,7 +414,7 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
              width = 0.5)
   # lines(day, accdata.cases, type = 'h', col = col.cases, 
   #       lwd = 3, lend = 'butt')
-
+  
   # plot spaghetti
   if (!meanonly) {
     # include.lines = c("C", "Iso", "Inf", "L")
@@ -432,13 +432,13 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                   color = col.cases.ci)
   }
   
-
+  
   # lines(E~cum.time,data=data[[1]], col=col.E.ci, lty=1)
   # lines(I+Iu~cum.time,data=data[[1]], col=col.I.ci, lty=1)
   # # lines(Iu~cum.time,data=data[[1]], col=Iu.col, lty=1)
   # lines(H~cum.time,data=data[[1]], col=col.nowcast.ci, lty=1)
   # lines(C~cum.time,data=data[[1]], col=col.cases.ci, lty=1, lwd=1)
-
+  
   plt <- plt +
     theme_classic() +
     scale_x_continuous(breaks = seq.int(0, max.time - trim.days, 5),
@@ -448,8 +448,8 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                                        format = '%b %d')) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     scale_y_continuous(trans = "log2", limits = c(1, 1e5),
-                       breaks = c(1e1, 1e2, 1e3, 1e4, 1e5))
-
+                       breaks = c(1, 10, 100, 1000, 10000, 100000))
+  
   # axis(1, at=seq(0,max.time,5), 
   #      labels=format(attr(data, "start_date")+seq(0,max.time,5), 
   #                    format= '%b %d'))
@@ -461,17 +461,17 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
       for (k in 2:min(100,nsims)) {              #add multiple epidemics to plot
         
         if ("L" %in% include.lines) plt <- plt +
-          geom_line(data = data[[k]], mapping = aes(cum.time, E),
-                    color = col.E.ci)
+            geom_line(data = data[[k]], mapping = aes(cum.time, E),
+                      color = col.E.ci)
         if ("Inf" %in% include.lines) plt <- plt +
-          geom_line(data = data[[k]], mapping = aes(cum.time, I + Iu),
-                    color = col.nowcast.ci)
+            geom_line(data = data[[k]], mapping = aes(cum.time, I + Iu),
+                      color = col.I.ci)
         if ("Iso" %in% include.lines) plt <- plt +
-          geom_line(data = data[[k]], mapping = aes(cum.time, H),
-                    color = col.I.ci)
+            geom_line(data = data[[k]], mapping = aes(cum.time, H),
+                      color = col.nowcast.ci)
         if ("C" %in% include.lines) plt <- plt +
-          geom_line(data = data[[k]], mapping = aes(cum.time, C),
-                    color = col.cases.ci)
+            geom_line(data = data[[k]], mapping = aes(cum.time, C),
+                      color = col.cases.ci)
         
         # lines(E~cum.time, data=data[[k]], col=col.E.ci, type='l', lty=1)
         # lines(I+Iu~cum.time, data=data[[k]], col=col.I.ci, type='l', lty=1)
@@ -490,10 +490,10 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
               mapping = aes(cum.time, E.mean, color = "latent"))
   if ("Inf" %in% include.lines) plt <- plt +
     geom_line(data = data[[1]], 
-              mapping = aes(cum.time, I.mean, color = "isolated"))
+              mapping = aes(cum.time, I.mean, color = "infectious"))
   if ("Iso" %in% include.lines) plt <- plt +
     geom_line(data = data[[1]], 
-              mapping = aes(cum.time, H.mean, color = "infectious"))
+              mapping = aes(cum.time, H.mean, color = "isolated"))
   if ("C" %in% include.lines) plt <- plt +
     geom_line(data = data[[1]], 
               mapping = aes(cum.time, C.mean, color = "cases"))
@@ -511,11 +511,11 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
   }
   if ("Inf" %in% include.lines) {
     values.vec <- c(values.vec, "infectious" = col.I)
-    labels.vec <- c(labels.vec, "Infectious cases in the community")
+    labels.vec <- c(labels.vec, "Isolated")
   }
   if ("Iso" %in% include.lines) {
     values.vec <- c(values.vec, "isolated" = col.nowcast)
-    labels.vec <- c(labels.vec, "Isolated")
+    labels.vec <- c(labels.vec, "Infectious cases in the community")
   }
   if ("C" %in% include.lines) {
     values.vec <- c(values.vec, "cases" = col.cases)
@@ -535,8 +535,8 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
           plot.title = element_text(size = 14),
           legend.text = element_text(margin = margin(t = 0, unit = "pt"))) +
     guides(color = guide_legend(nrow = nrow.val, byrow = TRUE))
-
- return(plt)
+  
+  return(plt)
   # legend('topleft', lty=c(1,1,1,1,1,1), lwd=c(1,1,1,1,3,3), bty='n', cex=0.75,
   #        col=c(col.E, col.I, col.nowcast, col.cases, 'black'),
   #        legend=c('Latent cases in the community', 'Infectious cases in the community', 'Isolated', 
@@ -583,7 +583,7 @@ return_maxvals <- function(data) {
 
 ### Modelling Healthcare -------------------------------------------------------
 model_hospitalizations <- function(data) {
-
+  
   nsims <- length(data)
   
   # Need to pass the results of the evaluate.model function (MOD)
@@ -618,7 +618,7 @@ model_hospitalizations <- function(data) {
   # Iu.mean <- rowMeans(m3)
   H.mean <- rowMeans(m4)
   C.mean <- rowMeans(m5)
-
+  
   # read in healthcare parameters file
   hc_params <- read_csv("Data/hc_params.csv")
   hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
@@ -638,100 +638,100 @@ model_hospitalizations <- function(data) {
   # res = list() #save results as list
   # for (n1 in 1:length(data)) #looping over all scenarios
   # {
-    # x = data[[n1]]
-    x <- data
-    res2 <- list() #results from each stochastic replicate
+  # x = data[[n1]]
+  x <- data
+  res2 <- list() #results from each stochastic replicate
+  
+  #loop over each stochastic replicate simulation for a given scenario
+  for (n2 in 1:length(x)) 
+  {
+    y <- x[[n2]]
     
-    #loop over each stochastic replicate simulation for a given scenario
-    for (n2 in 1:length(x)) 
+    #daily data
+    report.times <- seq(1, (length(y$cum.time)), by = (1 / attr(data, "dt"))) 
+    #use notified cases as basis for hospitalizations
+    #this has a few day time lag between a person being diagnosed
+    Ctotdaily = y$C[report.times] #total number of cases
+    Cnewdaily = diff(Ctotdaily) #daily number of new cases
+    
+    # new hospitalizations
+    # assuming specific proportions of children/adults/elderly and 
+    # associated risks   
+    Hosp_new_low = Cnewdaily * (C_prop * C_hosp_low + A_prop * A_hosp_low + 
+                                  E_prop * E_hosp_low + VE_prop * VE_hosp_low)  
+    Hosp_new_high = Cnewdaily * (C_prop * C_hosp_high + A_prop * A_hosp_high + 
+                                   E_prop * E_hosp_high + 
+                                   VE_prop * VE_hosp_high) 
+    
+    # total hospitalization, is the cumulative of the last hosp_time days of 
+    # new hospitalizations
+    Hosp_tot_low = rep(0, length(Hosp_new_low))
+    Hosp_tot_high = Hosp_tot_low
+    for (n3 in 1:length(Hosp_new_low))
     {
-      y <- x[[n2]]
-
-      #daily data
-      report.times <- seq(1, (length(y$cum.time)), by = (1 / attr(data, "dt"))) 
-      #use notified cases as basis for hospitalizations
-      #this has a few day time lag between a person being diagnosed
-      Ctotdaily = y$C[report.times] #total number of cases
-      Cnewdaily = diff(Ctotdaily) #daily number of new cases
-
-      # new hospitalizations
-      # assuming specific proportions of children/adults/elderly and 
-      # associated risks   
-      Hosp_new_low = Cnewdaily * (C_prop * C_hosp_low + A_prop * A_hosp_low + 
-                                    E_prop * E_hosp_low + VE_prop * VE_hosp_low)  
-      Hosp_new_high = Cnewdaily * (C_prop * C_hosp_high + A_prop * A_hosp_high + 
-                                     E_prop * E_hosp_high + 
-                                     VE_prop * VE_hosp_high) 
-      
-      # total hospitalization, is the cumulative of the last hosp_time days of 
-      # new hospitalizations
-      Hosp_tot_low = rep(0, length(Hosp_new_low))
-      Hosp_tot_high = Hosp_tot_low
-      for (n3 in 1:length(Hosp_new_low))
-      {
-        Hosp_tot_low[n3] = sum(Hosp_new_low[max(1, n3 - hosp_time_low):n3])
-        Hosp_tot_high[n3] = sum(Hosp_new_high[max(1, n3 - hosp_time_high):n3]) 
-      }
-      
-      # new critical cases
-      # assuming specific proportions of children/adults/elderly and associated 
-      #   critical risks   
-      Crit_new_low = Cnewdaily * (C_prop * C_hosp_low * C_crit_low + 
-                                    A_prop * A_hosp_low * A_crit_low + 
-                                    E_prop * E_hosp_low * E_crit_low + 
-                                    VE_prop * VE_hosp_low * VE_crit_low)  
-      Crit_new_high = Cnewdaily * (C_prop * C_hosp_high * C_crit_high + 
-                                     A_prop * A_hosp_high * A_crit_high + 
-                                     E_prop * E_hosp_high * E_crit_high + 
-                                     VE_prop * VE_hosp_high * VE_crit_high)
-      
-      # total critical, is the cumulative of the last crit_time days of new 
-      #   critical
-      Crit_tot_low = rep(0, length(Crit_new_low))
-      Crit_tot_high = Crit_tot_low
-      for (n3 in 1:length(Crit_new_low))
-      {
-        Crit_tot_low[n3] = sum(Crit_new_low[max(1, n3 - crit_time_low):n3])
-        Crit_tot_high[n3] = sum(Crit_new_high[max(1, n3 - crit_time_high):n3]) 
-      }
-      
-      #new deaths - should be lagged
-      Dead_new_low = Cnewdaily * (C_prop * C_death_low + A_prop * A_death_low + 
-                                    E_prop * E_death_low + 
-                                    VE_prop * VE_death_low)  
-      Dead_new_high = Cnewdaily * (C_prop * C_death_high + 
-                                     A_prop * A_death_high + 
-                                     E_prop * E_death_high + 
-                                     VE_prop * VE_death_high) 
-      
-      # total hospitalization, is the cumulative of the last hosp_time days of 
-      #   new hospitalizations
-      Dead_tot_low = cumsum(Dead_new_low)
-      Dead_tot_high = cumsum(Dead_new_high)
-      
-      #save result for each stochastic simulations    
-      dat = round(data.frame(Case_new = Cnewdaily, Case_tot = Ctotdaily[-1], 
-                             Hosp_new_low, Hosp_new_high, Hosp_tot_low, 
-                             Hosp_tot_high, Crit_new_low, Crit_new_high, 
-                             Crit_tot_low, Crit_tot_high, Dead_new_low, 
-                             Dead_new_high, Dead_tot_low, Dead_tot_high))
-      
-      res2[[n2]] = dat    
-      
-    } #end loop over stochastic replicates
-    # save results
-    # res[[n1]] = res2 
-  # } #end loop over scenarios
-
-    attr(res2, "nsims") <- attr(data, "nsims")
-    attr(res2, "start_date") <- attr(data, "start_date")
-    attr(res2, "ndays") <- attr(data, "ndays")
+      Hosp_tot_low[n3] = sum(Hosp_new_low[max(1, n3 - hosp_time_low):n3])
+      Hosp_tot_high[n3] = sum(Hosp_new_high[max(1, n3 - hosp_time_high):n3]) 
+    }
     
-    return(res2)
+    # new critical cases
+    # assuming specific proportions of children/adults/elderly and associated 
+    #   critical risks   
+    Crit_new_low = Cnewdaily * (C_prop * C_hosp_low * C_crit_low + 
+                                  A_prop * A_hosp_low * A_crit_low + 
+                                  E_prop * E_hosp_low * E_crit_low + 
+                                  VE_prop * VE_hosp_low * VE_crit_low)  
+    Crit_new_high = Cnewdaily * (C_prop * C_hosp_high * C_crit_high + 
+                                   A_prop * A_hosp_high * A_crit_high + 
+                                   E_prop * E_hosp_high * E_crit_high + 
+                                   VE_prop * VE_hosp_high * VE_crit_high)
+    
+    # total critical, is the cumulative of the last crit_time days of new 
+    #   critical
+    Crit_tot_low = rep(0, length(Crit_new_low))
+    Crit_tot_high = Crit_tot_low
+    for (n3 in 1:length(Crit_new_low))
+    {
+      Crit_tot_low[n3] = sum(Crit_new_low[max(1, n3 - crit_time_low):n3])
+      Crit_tot_high[n3] = sum(Crit_new_high[max(1, n3 - crit_time_high):n3]) 
+    }
+    
+    #new deaths - should be lagged
+    Dead_new_low = Cnewdaily * (C_prop * C_death_low + A_prop * A_death_low + 
+                                  E_prop * E_death_low + 
+                                  VE_prop * VE_death_low)  
+    Dead_new_high = Cnewdaily * (C_prop * C_death_high + 
+                                   A_prop * A_death_high + 
+                                   E_prop * E_death_high + 
+                                   VE_prop * VE_death_high) 
+    
+    # total hospitalization, is the cumulative of the last hosp_time days of 
+    #   new hospitalizations
+    Dead_tot_low = cumsum(Dead_new_low)
+    Dead_tot_high = cumsum(Dead_new_high)
+    
+    #save result for each stochastic simulations    
+    dat = round(data.frame(Case_new = Cnewdaily, Case_tot = Ctotdaily[-1], 
+                           Hosp_new_low, Hosp_new_high, Hosp_tot_low, 
+                           Hosp_tot_high, Crit_new_low, Crit_new_high, 
+                           Crit_tot_low, Crit_tot_high, Dead_new_low, 
+                           Dead_new_high, Dead_tot_low, Dead_tot_high))
+    
+    res2[[n2]] = dat    
+    
+  } #end loop over stochastic replicates
+  # save results
+  # res[[n1]] = res2 
+  # } #end loop over scenarios
+  
+  attr(res2, "nsims") <- attr(data, "nsims")
+  attr(res2, "start_date") <- attr(data, "start_date")
+  attr(res2, "ndays") <- attr(data, "ndays")
+  
+  return(res2)
 }
 
 summarise_model_hospitalizations <- function(model_res) {
-
+  
   # read in healthcare parameters file
   hc_params <- read_csv("Data/hc_params.csv")
   hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
@@ -755,43 +755,43 @@ summarise_model_hospitalizations <- function(model_res) {
   dat = list()
   # for (n1 in 1:length(sims)) #looping over all scenarios
   # {
-    # x = res[[n1]] #pull out each scenario
-    x <- model_res
-    for (n2 in 1:length(x)) #loop over all realizations, compute means
-    {
-      if (n2 == 1) xt = x[[n2]] 
-      else xt = xt + x[[n2]]
+  # x = res[[n1]] #pull out each scenario
+  x <- model_res
+  for (n2 in 1:length(x)) #loop over all realizations, compute means
+  {
+    if (n2 == 1) xt = x[[n2]] 
+    else xt = xt + x[[n2]]
+  }
+  xt = round(xt / length(x))
+  # run over each outcome column in xt, add to data frame time-shifted 
+  # to account for delays
+  
+  df = array(0, dim = c(length(Dates), ncol(xt))) #empty data frame
+  for (n2 in 1:ncol(xt))
+  {
+    if (n2 < 3) #cases, no time lag
+    { 
+      df[1:nrow(xt), n2] = xt[, n2]
     }
-    xt = round(xt / length(x))
-    # run over each outcome column in xt, add to data frame time-shifted 
-    # to account for delays
-    
-    df = array(0, dim = c(length(Dates), ncol(xt))) #empty data frame
-    for (n2 in 1:ncol(xt))
-    {
-      if (n2 < 3) #cases, no time lag
-      { 
-        df[1:nrow(xt), n2] = xt[, n2]
-      }
-      if (n2 > 2 && n2 < 11) #hosp and crit, 7 day time lag
-      { 
-        df[(1 + hosp_delay):(nrow(xt) + hosp_delay), n2] = xt[, n2]
-      }
-      if (n2>10 ) #death, 14 day time lag
-      { 
-        df[(1+death_delay):(nrow(xt)+death_delay),n2] = xt[,n2]
-      }
+    if (n2 > 2 && n2 < 11) #hosp and crit, 7 day time lag
+    { 
+      df[(1 + hosp_delay):(nrow(xt) + hosp_delay), n2] = xt[, n2]
     }
-    colnames(df) = colnames(xt)
-    
-    # dat[[n1]] = data.frame(Dates, df)
-    dat <- data.frame(Dates, df)
-    
-    attr(data, "nsims") <- attr(model_res, "nsims")
-    attr(data, "start_date") <- attr(model_res, "start_date")
-    attr(data, "ndays") <- attr(model_res, "ndays")
-    
-    return(dat)
+    if (n2>10 ) #death, 14 day time lag
+    { 
+      df[(1+death_delay):(nrow(xt)+death_delay),n2] = xt[,n2]
+    }
+  }
+  colnames(df) = colnames(xt)
+  
+  # dat[[n1]] = data.frame(Dates, df)
+  dat <- data.frame(Dates, df)
+  
+  attr(data, "nsims") <- attr(model_res, "nsims")
+  attr(data, "start_date") <- attr(model_res, "start_date")
+  attr(data, "ndays") <- attr(model_res, "ndays")
+  
+  return(dat)
   # } #end loop over scenarios
   #write computed results to file
   # saveRDS(dat,'healthcareresults.rds')
@@ -803,7 +803,7 @@ summarise_model_hospitalizations <- function(model_res) {
 # function created by Justin
 hospital_capacity <- function(res_sum) {
   
-
+  
   # read in healthcare parameters file
   hc_params <- read_csv("Data/hc_params.csv")
   hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
@@ -874,7 +874,7 @@ plot_hospitalizations <- function(res_sum, title = "", type = "cum",
   # read in up to date hospitalizations file
   if (is.na(hosp_file)) parmc_df <- read_format_hosp("Data/parmc_hospitalizations.csv")
   else parmc_df <- read_format_hosp(hosp_file)
-
+  
   # Only plot two weeks into the future
   parmc_df %<>% filter(AdmitDates <= (Sys.Date() + 21))
   res_sum %<>% filter(Dates <= (Sys.Date() + 21))
@@ -901,7 +901,7 @@ plot_hospitalizations <- function(res_sum, title = "", type = "cum",
            title = title) +
       scale_color_discrete(name = "Model Bounds", labels = c("Lower", "Upper")) +
       theme_classic()
-      
+    
     
   } else if (type == "capacity") {
     # ggplot() +
