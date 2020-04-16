@@ -7,6 +7,7 @@
 ## Georgia DPH website with number of confirmed cases in each county
 library(rvest)
 library(lubridate)
+library(dplyr)
 
 # Tell which website to look in / scrape HTML cod 
 dailyCountWebsite <- "https://d20s4vd27d0hk0.cloudfront.net/?initialWidth=663&childId=covid19dashdph&parentTitle=COVID-19%20Daily%20Status%20Report%20%7C%20Georgia%20Department%20of%20Public%20Health&parentUrl=https%3A%2F%2Fdph.georgia.gov%2Fcovid-19-daily-status-report"
