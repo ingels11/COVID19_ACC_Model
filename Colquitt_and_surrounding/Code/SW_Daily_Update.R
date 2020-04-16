@@ -133,7 +133,7 @@ detach("package:plyr", unload=TRUE)
 library(git2r)
 
 ## FOR SOURCE FXN BELOW, GETWD SHOULD BE THE "CODE" FOLDER
-source(paste0(getwd(),"/","UpdateGitHub.R"))
+source("Athens_and_surrounding/Code/UpdateGitHub.R")
 
 # TO UPDATE GITHUB FUNCTION, CHANGE REPO PATH TO GITHUB PATH. ONE BEFORE COLQUITT_AND_SURROUNDING
 UpdateGitHub(repo = "/Users/ishaandave/Box/Random Help Items/COVID19 Git/COVID19_Athens_Model")
