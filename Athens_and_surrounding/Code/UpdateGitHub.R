@@ -82,7 +82,7 @@ UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, 
       for (i in 1:num) {
         writeLines(paste0("    ", i, ": ",unlist(status()["untracked"])[i]))
       }
-      add(repo, unlist(status()["untracked"]))
+      git2r::add(repo, unlist(status()["untracked"]))
       writeLines(paste0("Items have been Staged."))
       commit(message = paste(Sys.time(), "Initial commit", sep = " - "))
       writeLines(paste0("Items have been Committed."))
@@ -101,7 +101,7 @@ UpdateGitHub <- function(repo=getwd(), untracked=TRUE, stage=TRUE, commit=TRUE, 
       }
     }
     if (!is.null(unlist(status()["unstaged"]))) {
-      add(repo, unlist(status()["unstaged"]))
+      git2r::add(repo, unlist(status()["unstaged"]))
       num2 <- length(unlist(status()["unstaged"]))
       if (num2 == 0) {
         writeLines(paste0("Items have been Staged."))

@@ -420,46 +420,30 @@ write_rds(outSDlateUpper, paste0("Colquitt_and_surrounding/Models/", "social_dis
 
 
 estCountRaw = NULL
-for (i in 1:15){
-  estCountRaw[i] = c((outBaselineInt[[i]]$C[nrow(outBaselineInt[[i]])]))
-}
-
-
-
-
 finalEstCountSDearly = NULL
-for (i in 1:15){
-  finalEstCountSDearly[i] = c((outSDearly[[i]]$C[nrow(outSDearly[[i]])]))
-}
-
-
 finalEstCountSDearlyUpp = NULL
-for (i in 1:15){
-  finalEstCountSDearlyUpp[i] = c((outSDearlyUpper[[i]]$C[nrow(outSDearlyUpper[[i]])]))
-}
-
-
-
-
 finalEstCountSDlate= NULL
+finalEstCountSDlateUpp = NULL
+
 for (i in 1:15){
-  finalEstCountSDlate[i] = c((outSDlate[[i]]$C[nrow(outSDlate[[i]])]))
+  estCountRaw[i]              = c((outBaselineInt[[i]]$C[nrow(outBaselineInt[[i]])]))
+  finalEstCountSDearly[i]     = c((outSDearly[[i]]$C[nrow(outSDearly[[i]])]))
+  finalEstCountSDearlyUpp[i]  = c((outSDearlyUpper[[i]]$C[nrow(outSDearlyUpper[[i]])]))
+  finalEstCountSDlate[i]      = c((outSDlate[[i]]$C[nrow(outSDlate[[i]])]))
+  finalEstCountSDlateUpp[i]   = c((outSDlateUpper[[i]]$C[nrow(outSDlateUpper[[i]])]))
 }
 
-ceiling(c(mean(estCountRaw), mean(finalEstCountSDearly), mean(finalEstCountSDearlyUpp),
+
+nums = ceiling(c(mean(estCountRaw), mean(finalEstCountSDearly), mean(finalEstCountSDearlyUpp),
           mean(finalEstCountSDlate), mean(finalEstCountSDlateUpp)))
 
+scenLabels = c("Baseline No Intervention", "Early SD Intervention 3/21 Intermediate",
+               "Early SD Intervention 3/21 Upper", "Late SD Intervention 4/2 Intermediate",
+               "Late SD Intervention 4/2 Upper")
 
-finalEstCountSDlateUpp = NULL
-for (i in 1:15){
-  finalEstCountSDlateUpp[i] = c((outSDlateUpper[[i]]$C[nrow(outSDlateUpper[[i]])]))
-}
+estCounts = tibble(scenLabels, nums)
+print(kable(estCounts))
 
-mean(finalEstCountSDlateUpp)
-
-
-
-ceiling(c(mean(estCountRaw), mean(estCountRawUpper), mean(finalEstCountSD), mean(finalEstCountSDUpp)))
 
 
 empty = data.frame(matrix(0L, nrow = nrow(outSD[[15]]), ncol = 16))
