@@ -8,6 +8,9 @@ library(readr)
 library(tidyr)
 library(lubridate)
 
+# Set working directory up one level so code works as before
+if ("Athens_and_surrounding" %in% dir()) setwd("Athens_and_surrounding")
+
 ### Modelling the Epidemic -----------------------------------------------------
 
 # The function onestep simulates one time step in the transmission process.
@@ -579,6 +582,17 @@ return_maxvals <- function(data) {
   
   return(list(max.time = max.time,
               max.y = max.y))
+}
+
+return_valstats <- function(mod, column, date.val) {
+  
+  params <- attr(mod, "params")
+  iter_num <- (as.numeric(date.val - attr(mod, "start_date")) + 1) / params$dt
+  tmp.vec <- c()
+  for (i in 1:length(mod)) {
+    tmp.vec <- c(tmp.vec, mod[[i]][iter_num, column])
+  }
+  return(c(mean(tmp.vec), min(tmp.vec), max(tmp.vec)))
 }
 
 ### Modelling Healthcare -------------------------------------------------------
