@@ -1,4 +1,4 @@
-cumrm(list = ls())
+rm(list = ls())
 source("Colquitt_and_surrounding/Code/model_fncs.R")
 library(ggplot2)
 library(lubridate)
