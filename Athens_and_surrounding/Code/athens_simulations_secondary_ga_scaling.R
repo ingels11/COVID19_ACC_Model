@@ -1,5 +1,5 @@
 rm(list = ls())
-source("Code/model_fncs.R")
+source("Athens_and_surrounding/Code/model_fncs.R")
 library(ggplot2)
 library(lubridate)
 library(scales)
@@ -228,7 +228,7 @@ plot.model.acc(outBaselineUpper, dailyCases$date[1:which(dailyCases$date == Sys.
 scen_row <- 8
 
 # If nationally was 3/12/20 then this is prior to ACC outbreak so z = 0
-gamma <- function(z = scenarios[scen_row, "z"], b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
+gamma <- function(z = 6, b=scenarios[scen_row, "b"], a0=scenarios[scen_row, "a0"], t){
   # piecewise function
   # default parameters z = 12, b=1/7, a0=1/1.5
   #    z: time at start of intervention (notionally March 12)
@@ -247,7 +247,7 @@ beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "bet
 
 s <- scenarios[,3:31]
 i <- scen_row
-outSD<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+outSD<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=6, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
@@ -337,8 +337,8 @@ ceiling(c(mean(estCountRaw), mean(estCountRawUpper), mean(finalEstCountSD), mean
 empty = data.frame(matrix(0L, nrow = nrow(outSD[[15]]), ncol = 16))
 
 for (i in 1:15){
-  empty[, 1] = as.data.frame(outBaselineInt[[1]]$cum.time)
-  empty[, i+1] = as.data.frame(outBaselineInt[[i]]$C)
+  empty[, 1] = as.data.frame(outSD[[1]]$cum.time)
+  empty[, i+1] = as.data.frame(outSD[[i]]$C)
 }
 
 names(empty)[1] = c("time")
