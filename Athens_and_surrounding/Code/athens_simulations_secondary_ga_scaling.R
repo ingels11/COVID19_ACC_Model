@@ -376,7 +376,7 @@ x = 1:80
 lo = loess(estCasesByDay$diff~x)
 plot(x,estCasesByDay$diff, type = "n", ylab = "Model Predicted New Cases Daily") 
 lines(predict(lo), col='red', lwd=2)
-plot(estCasesByDay$date[1:39], diff2, type = "l")
+
 
 write.csv(estCasesByDay, paste0("/Users/ishaandave/Desktop/COVID Scratch Work/Cases By Day", Sys.Date(), ".csv"), row.names = F)
 
