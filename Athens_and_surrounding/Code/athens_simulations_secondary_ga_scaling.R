@@ -356,6 +356,23 @@ for(row in 1:nrow(empty2)){
 
 estCasesByDay = empty2[, 17:18]
 estCasesByDay$date = format(estCasesByDay$date,  "%B %d")
+
+
+
+for(n in 2:nrow(estCasesByDay)) {
+  estCasesByDay$diff[n] = estCasesByDay[n, 2] - estCasesByDay[n-1, 2]
+}
+
+
+diff2 = rep(NA, nrow(dailyCases2))
+
+for(i in 2:nrow(dailyCases2)){
+  diff2[i] = dailyCases2$secondary_cum[i] -dailyCases2$secondary_cum[i-1]
+}
+
+
+plot(estCasesByDay$date, estCasesByDay$diff, type = "l")
+plot(estCasesByDay$date[1:39], diff2, type = "l")
 write.csv(estCasesByDay, paste0("/Users/ishaandave/Desktop/COVID Scratch Work/Cases By Day", Sys.Date(), ".csv"), row.names = F)
 
 ## Lower Bound Social Distancing 
