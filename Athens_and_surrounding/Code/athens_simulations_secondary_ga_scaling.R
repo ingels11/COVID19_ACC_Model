@@ -334,11 +334,66 @@ for (i in 1:15){
 ceiling(c(mean(estCountRaw), mean(estCountRawUpper), mean(finalEstCountSD), mean(finalEstCountSDUpp)))
 
 
-empty = data.frame(matrix(0L, nrow = nrow(outSD[[15]]), ncol = 16))
+## NO INTERVENTION 
+
+emptyNo = data.frame(matrix(0L, nrow = nrow(outBaselineInt[[15]]), ncol = 16))
 
 for (i in 1:15){
-  empty[, 1] = as.data.frame(outSD[[1]]$cum.time)
-  empty[, i+1] = as.data.frame(outSD[[i]]$C)
+  emptyNo[, 1] = as.data.frame(outBaselineInt[[1]]$cum.time)
+  emptyNo[, i+1] = as.data.frame(outBaselineInt[[i]]$C)
+}
+
+names(emptyNo)[1] = c("time")
+
+emptyNo2= emptyNo[which(emptyNo$time %% 1 == 0),]
+emptyNo2$date = seq(as.Date("2020-03-14"), as.Date("2020-03-14")+nrow(emptyNo2)-1, by = "day")
+
+
+
+for(row in 1:nrow(emptyNo2)){
+  emptyNo2$estCumCases[row] = ceiling(mean(as.numeric(emptyNo2[row, 2:16])))
+}
+
+
+
+estCasesByDayNo = emptyNo2[, 17:18]
+# estCasesByDay$date = format(estCasesByDay$date,  "%B %d")
+
+
+
+for(n in 2:nrow(estCasesByDayNo)) {
+  estCasesByDayNo$diff[n] = estCasesByDayNo[n, 2] - estCasesByDayNo[n-1, 2]
+}
+
+
+diffNo2 = rep(NA, nrow(dailyCases2))
+
+for(i in 2:nrow(dailyCases2)){
+  diff2[i] = dailyCases2$secondary_cum[i] -dailyCases2$secondary_cum[i-1]
+}
+
+p = ggplot(data = estCasesByDayNo, aes(date, diff)) + 
+  geom_smooth(method = "loess", size = 1, se = F)+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+      panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+  labs(title = "Incident Case Notifications for Clarke and Surrounding Counties",
+       x = "Date", y = "New Case Notifications");p
+
+
+
+
+
+
+
+
+
+#### SOCIAL DISTANCING EST NEW CASES DAILY
+
+empty = data.frame(matrix(0L, nrow = nrow(outSDUpper[[15]]), ncol = 16))
+
+for (i in 1:15){
+  empty[, 1] = as.data.frame(outSDUpper[[1]]$cum.time)
+  empty[, i+1] = as.data.frame(outSDUpper[[i]]$C)
 }
 
 names(empty)[1] = c("time")
@@ -355,7 +410,7 @@ for(row in 1:nrow(empty2)){
 
 
 estCasesByDay = empty2[, 17:18]
-estCasesByDay$date = format(estCasesByDay$date,  "%B %d")
+# estCasesByDay$date = format(estCasesByDay$date,  "%B %d")
 
 
 
@@ -371,8 +426,26 @@ for(i in 2:nrow(dailyCases2)){
 }
 
 
-plot(estCasesByDay$date, estCasesByDay$diff, type = "l")
-x = 1:80
+
+a = merge(estCasesByDay, estCasesByDayNo, by = "date")
+
+b = a[1:which(a$date == "2020-05-01"),]
+
+p = ggplot(data = b, aes(date, diff.x)) + 
+  geom_smooth(method = "loess", size = 1, se = F, color = "blue") + 
+  geom_smooth(aes(y = diff.y ), method = "loess", size = 1, se = F, colour = 'red')+ 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"), 
+        legend.position = c(1,1))+
+  labs(title = "Incident Case Notifications for Clarke and Surrounding Counties",
+       x = "Date", y = "New Case Notifications") 
+
+
+
+p
+
+
+
 lo = loess(estCasesByDay$diff~x)
 plot(x,estCasesByDay$diff, type = "n", ylab = "Model Predicted New Cases Daily") 
 lines(predict(lo), col='red', lwd=2)

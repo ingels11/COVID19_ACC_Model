@@ -449,8 +449,8 @@ print(kable(estCounts))
 empty = data.frame(matrix(0L, nrow = nrow(outSD[[15]]), ncol = 16))
 
 for (i in 1:15){
-  empty[, 1] = as.data.frame(outBaselineInt[[1]]$cum.time)
-  empty[, i+1] = as.data.frame(outBaselineInt[[i]]$C)
+  empty[, 1] = as.data.frame(outSD[[1]]$cum.time)
+  empty[, i+1] = as.data.frame(outSD[[i]]$C)
 }
 
 names(empty)[1] = c("time")
@@ -468,6 +468,27 @@ for(row in 1:nrow(empty2)){
 
 estCasesByDay = empty2[, 17:18]
 estCasesByDay$date = format(estCasesByDay$date,  "%B %d")
+
+
+
+for(n in 2:nrow(estCasesByDay)) {
+  estCasesByDay$diff[n] = estCasesByDay[n, 2] - estCasesByDay[n-1, 2]
+}
+
+
+diff2 = rep(NA, nrow(dailyCases2))
+
+for(i in 2:nrow(dailyCases2)){
+  diff2[i] = dailyCases2$secondary_cum[i] -dailyCases2$secondary_cum[i-1]
+}
+
+
+plot(estCasesByDay$date, estCasesByDay$diff, type = "l")
+x = 1:80
+lo = loess(estCasesByDay$diff~x)
+plot(x,estCasesByDay$diff, type = "n", ylab = "Model Predicted New Cases Daily") 
+lines(predict(lo), col='red', lwd=2)
+
 write.csv(estCasesByDay, paste0("/Users/ishaandave/Desktop/COVID Scratch Work/Cases By Day", Sys.Date(), ".csv"), row.names = F)
 
 ## Lower Bound Social Distancing 
