@@ -127,3 +127,9 @@ detach("package:plyr", unload=TRUE)
 
 # This process will be defined in a function ----
 
+## FOR SOURCE FXN BELOW, GETWD SHOULD BE THE "CODE" FOLDER
+source("Athens_and_surrounding/Code/UpdateGitHub.R")
+
+# TO UPDATE GITHUB FUNCTION, CHANGE REPO PATH TO GITHUB PATH. ONE BEFORE COLQUITT_AND_SURROUNDING
+UpdateGitHub(repo = "/Users/ishaandave/Box/Random Help Items/COVID19 Git/COVID19_Athens_Model")
+
