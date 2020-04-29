@@ -5,14 +5,19 @@
 # This is being done every day by Ishaan/Nicholas
 ### Setup ----------------------------------------------------------------------
 rm(list = ls())
-source("Code/model_fncs.R")
+if ("Athens_and_surrounding" %in% dir()) {
+  source("Athens_and_surrounding/Code/model_fncs.R")
+} else {
+  source("Code/model_fncs.R")
+} 
+if ("Athens_and_surrounding" %in% dir()) setwd("Athens_and_surrounding")
 library(ggplot2)
 
 cumCases <- read_csv("Data/primary and secondary counties cases.csv")
 cumCases$secondary <- rowSums(cumCases[, 2:18])
 #cumCases %<>% filter(date <= Sys.Date())
 # This corresponds to the most recent reported case information
-cumCases %<>% filter(date <= as.Date("2020-04-19"))
+# cumCases %<>% filter(date <= as.Date("2020-04-28"))
 
 
 # run models
@@ -31,7 +36,7 @@ cumCases %<>% filter(date <= as.Date("2020-04-19"))
 # hospital_capacity()
 
 # this corresponds to the most recent model run date (see Models folder)
-latest_date <- "2020-04-08"
+latest_date <- "2020-04-29"
 
 ### Poor Social Distancing Model -----------------------------------------------
 # Natural epidemic
@@ -103,3 +108,4 @@ plot_hospitalizations(avg_hosp_mod, type = "capacity",
 
 # Now free to run the summary in athens_secondary_summary.Rmd with updated
 # models and case counts
+setwd("..")

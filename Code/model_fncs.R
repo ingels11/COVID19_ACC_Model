@@ -9,7 +9,7 @@ library(tidyr)
 library(lubridate)
 
 # Set working directory up one level so code works as before
-if ("Athens_and_surrounding" %in% dir()) setwd("Athens_and_surrounding")
+# if ("Athens_and_surrounding" %in% dir()) setwd("Athens_and_surrounding")
 
 ### Modelling the Epidemic -----------------------------------------------------
 
