@@ -596,7 +596,7 @@ return_valstats <- function(mod, column, date.val) {
 }
 
 ### Modelling Healthcare -------------------------------------------------------
-model_hospitalizations <- function(data) {
+model_hospitalizations <- function(data, hc_params) {
 
   nsims <- length(data)
   
@@ -634,7 +634,7 @@ model_hospitalizations <- function(data) {
   C.mean <- rowMeans(m5)
 
   # read in healthcare parameters file
-  hc_params <- read_csv("Data/hc_params.csv")
+  # hc_params <- read_csv("Data/hc_params.csv")
   hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
                         hc_params$param)
   # create variables from list of parameters
@@ -744,10 +744,10 @@ model_hospitalizations <- function(data) {
     return(res2)
 }
 
-summarise_model_hospitalizations <- function(model_res) {
+summarise_model_hospitalizations <- function(model_res, hc_params) {
 
   # read in healthcare parameters file
-  hc_params <- read_csv("Data/hc_params.csv")
+  # hc_params <- read_csv("Data/hc_params.csv")
   hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
                         hc_params$param)
   # create variables from list of parameters
@@ -815,11 +815,11 @@ summarise_model_hospitalizations <- function(model_res) {
 # use the new cases column to create a delayed exit hospital column
 # combine new cases and exit hospital column to estiamte numbers throughout
 # function created by Justin
-hospital_capacity <- function(res_sum) {
+hospital_capacity <- function(res_sum, hc_params) {
   
 
   # read in healthcare parameters file
-  hc_params <- read_csv("Data/hc_params.csv")
+  # hc_params <- read_csv("Data/hc_params.csv")
   hc_params <- setNames(split(hc_params$value, seq(nrow(hc_params))), 
                         hc_params$param)
   # create variables from list of parameters
@@ -883,14 +883,16 @@ plot_model_hc <- function(res_sum) {
 }
 
 plot_hospitalizations <- function(res_sum, title = "", type = "cum",
-                                  hosp_file = NA) {
+                                  hosp_file = NA, add_hosp = TRUE) {
   
   # read in up to date hospitalizations file
-  if (is.na(hosp_file)) parmc_df <- read_format_hosp("Data/parmc_hospitalizations.csv")
-  else parmc_df <- read_format_hosp(hosp_file)
-
+  if (add_hosp) {
+    if (is.na(hosp_file)) parmc_df <- read_format_hosp("Data/parmc_hospitalizations.csv")
+    else parmc_df <- read_format_hosp(hosp_file)
+    parmc_df %<>% filter(AdmitDates <= (Sys.Date() + 21))
+  }
   # Only plot two weeks into the future
-  parmc_df %<>% filter(AdmitDates <= (Sys.Date() + 21))
+  
   res_sum %<>% filter(Dates <= (Sys.Date() + 21))
   
   # create figure to compare model and actual hospitalizations
@@ -904,9 +906,14 @@ plot_hospitalizations <- function(res_sum, title = "", type = "cum",
     #        title = title) +
     #   theme_classic()
     
-    ggplot() +
-      geom_bar(mapping = aes(x = AdmitDates, y = Number_cum),
-               data = parmc_df, stat = "identity") +
+    if (add_hosp) {
+      plt <- ggplot() +
+        geom_bar(mapping = aes(x = AdmitDates, y = Number_cum),
+                 data = parmc_df, stat = "identity")
+    } else {
+      plt <- ggplot()
+    }
+     plt <- plt +
       geom_line(mapping = aes(x = Dates, y = cumsum(Hosp_new_high), color = "red"),
                 data = res_sum) +
       geom_line(mapping = aes(x = Dates, y = cumsum(Hosp_new_low), color = "green"),
@@ -927,9 +934,14 @@ plot_hospitalizations <- function(res_sum, title = "", type = "cum",
     #        title = title) +
     #   theme_classic()
     
-    ggplot() +
-      geom_bar(mapping = aes(x = AdmitDates, y = HospNum),
-               data = parmc_df, stat = "identity") +
+    if (add_hosp) {
+      plt <- ggplot() +
+        geom_bar(mapping = aes(x = AdmitDates, y = HospNum),
+                 data = parmc_df, stat = "identity")
+    } else {
+      plt <- ggplot()
+    }
+     plt <- plt +
       geom_line(mapping = aes(x = Dates, y = Hosp_tot_high, color = "red"),
                 data = res_sum) +
       geom_line(mapping = aes(x = Dates, y = Hosp_tot_low, color = "green"),
@@ -942,7 +954,7 @@ plot_hospitalizations <- function(res_sum, title = "", type = "cum",
   } else if (type == "pct") {
     res_sum %<>% mutate(hosp_pct_high = cumsum(Hosp_new_high) / Case_tot,
                         hosp_pct_low = cumsum(Hosp_new_low) / Case_tot)
-    ggplot(data = res_sum) +
+    plt <- ggplot(data = res_sum) +
       geom_line(mapping = aes(x = Dates, y = hosp_pct_high, color = "red")) +
       geom_line(mapping = aes(x = Dates, y = hosp_pct_low, color = "green")) +
       labs(x = "Dates", y = "Percent of Cases Hospitalized",
@@ -951,7 +963,7 @@ plot_hospitalizations <- function(res_sum, title = "", type = "cum",
       theme_classic()
     
   }
-  
+  return (plt)
 }
 
 read_format_hosp <- function(hosp_file = NA) {

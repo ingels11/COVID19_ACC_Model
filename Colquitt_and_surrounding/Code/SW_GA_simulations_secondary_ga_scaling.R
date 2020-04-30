@@ -172,7 +172,7 @@ plot.model.acc(outBaselineInt, date_vec, cum_vec,
                log='y', title='Natural Epidemic (No Social Distancing)')
 
 write_rds(outBaselineInt, 
-          paste0("Colquitt_and_surrounding/Models/", "poor_model_", Sys.Date()))
+          paste0("Colquitt_and_surrounding/Models/", "poor_model_", Sys.Date(), ".rds"))
 
 
 
@@ -254,9 +254,10 @@ outSDearly<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4
                        nsims=15, nstep=NULL, start=start)
 
 plot.model.acc(outSDearly, date_vec, cum_vec,
-               log='y', title='Social Distancing 3/21 (Baseline)')
+               log='y', title='Social Distancing 3/21 (Baseline)',
+               include.lines = c("C", "Inf", "L"))
 
-write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "social_distance_base_", Sys.Date()))
+write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "avg_model_", Sys.Date(), ".rds"))
 
 
 # With a change
@@ -272,11 +273,30 @@ outSDearly<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4
                             nsims=15, nstep=NULL, start=start)
 
 plot.model.acc(outSDearly, date_vec, cum_vec,
-               log='y', title='Social Distancing 3/21 (Baseline)')
+               log='y', title='Social Distancing 3/21 (Baseline)',
+               include.lines = c("C", "Inf", "L"))
 
-write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "social_distance_base_", Sys.Date()))
+write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "avg_change_model_", Sys.Date(), ".rds"))
 
 
+# With a bad change
+beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=3, 
+                 beta.factor2=1, w2=41) {
+  ifelse(t<=w, beta0, ifelse(t>w2, beta0 / beta.factor2, beta0 / beta.factor))
+} 
+
+outSDearly<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
+                            init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
+                                        I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
+                                        H=s[i,25], Ru=s[i,26], C=s[i,27]),
+                            nsims=15, nstep=NULL, start=start)
+
+plot.model.acc(outSDearly, date_vec, cum_vec,
+               log='y', title='Social Distancing 3/21 (Baseline)',
+               include.lines = c("C", "Inf", "L"))
+
+write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "avg_badchange_model_", Sys.Date(), ".rds"))
+browser()
 ## Social Distancing Upper Bound (poor social distancing)
 ## Shelter in place order on March 21
 
