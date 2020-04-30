@@ -446,9 +446,18 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                        labels = format(attr(data, "start_date") +
                                          seq.int(0, max.time - trim.days, 5),
                                        format = '%b %d')) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    scale_y_continuous(trans = "log2", limits = c(1, 1e5),
-                       breaks = c(1, 10, 100, 1000, 10000, 100000))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  if (log == "y") {
+    plt <- plt + 
+      scale_y_continuous(trans = "log2", limits = c(1, 1e5),
+                         breaks = c(1, 10, 100, 1000, 10000, 100000))
+  } else {
+    plt <- plt + 
+      scale_y_continuous(limits = c(1, 1e5),
+                         breaks = c(1, 10, 100, 1000, 10000, 100000))
+  }
+  
   
   # axis(1, at=seq(0,max.time,5), 
   #      labels=format(attr(data, "start_date")+seq(0,max.time,5), 
