@@ -240,18 +240,21 @@ q <- function(t, w = scenarios[scen_row, "w"], q0=scenarios[scen_row, "q0"], q1=
 #   ifelse(t<=w, beta0, beta0 / beta.factor)
 # } 
 # Without a change in shelter in place, etc.
-beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=3, 
-                 beta.factor2=3, w2=41) {
+beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2.6, 
+                 beta.factor2=2.6, w2=41) {
   ifelse(t<=w, beta0, ifelse(t>w2, beta0 / beta.factor2, beta0 / beta.factor))
 } 
 
-s <- scenarios[,3:31]
+s <- scenarios[, 3:31]
 i <- scen_row
+s[i, 11:24] <- s[i, 11:24] * 0.835
 outSDearly<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=s[i,9]),
                        init = list(S=s[i,10], E1=s[i,11], E2=s[i,12], E3=s[i,13], E4=s[i,14], E5=s[i,15], E6=s[i,16],
                                    I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
                                    H=s[i,25], Ru=s[i,26], C=s[i,27]),
                        nsims=15, nstep=NULL, start=start)
+# return_valstats(outSDearly, "C", as.Date("2020-04-24"))
+# return_valstats(outSDearly, "C", as.Date("2020-05-05")) - return_valstats(outSDearly, "C", as.Date("2020-05-04"))
 
 plot.model.acc(outSDearly, date_vec, cum_vec,
                log='y', title='Social Distancing 3/21 (Baseline)',
@@ -261,8 +264,8 @@ write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "avg_model_", S
 
 
 # With a change
-beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=3, 
-                 beta.factor2=2, w2=41) {
+beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2.6, 
+                 beta.factor2=1.8, w2=41) {
   ifelse(t<=w, beta0, ifelse(t>w2, beta0 / beta.factor2, beta0 / beta.factor))
 } 
 
@@ -271,6 +274,9 @@ outSDearly<- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=7, b=s[i,4
                                         I1 = s[i,17], I2 = s[i,18], I3 = s[i,19], I4 = s[i,20], Iu1=s[i,21], Iu2=s[i,22], Iu3=s[i,23], Iu4=s[i,24],
                                         H=s[i,25], Ru=s[i,26], C=s[i,27]),
                             nsims=15, nstep=NULL, start=start)
+return_valstats(outSDearly, "C", as.Date("2020-04-24"))
+return_valstats(outSDearly, "C", as.Date("2020-05-05")) - return_valstats(outSDearly, "C", as.Date("2020-05-04"))
+
 
 plot.model.acc(outSDearly, date_vec, cum_vec,
                log='y', title='Social Distancing 3/21 (Baseline)',
@@ -280,7 +286,7 @@ write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "avg_change_mod
 
 
 # With a bad change
-beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=3, 
+beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=2.6, 
                  beta.factor2=1, w2=41) {
   ifelse(t<=w, beta0, ifelse(t>w2, beta0 / beta.factor2, beta0 / beta.factor))
 } 

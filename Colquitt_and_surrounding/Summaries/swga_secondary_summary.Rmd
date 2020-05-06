@@ -80,7 +80,8 @@ The following plot predicts the natural epidemic if allowed to spread with no me
 ```{r}
 plot.model.acc(epid_mod, cumCases$date, cumCases$secondary,
                log='y', title='Poor Social Distancing Model',
-               include.lines = c("C", "L", "Inf"))
+               include.lines = c("C", "L", "Inf"),
+               max.y = 1e5)
 ```
 
 

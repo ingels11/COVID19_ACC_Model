@@ -136,3 +136,24 @@ plot_hospitalizations(avg_hosp_mod, type = "capacity",
 ggsave(paste0("Colquitt_and_surrounding/Plots/avg_badchange_socdist_hosp_current_", Sys.Date(), ".png"))
 
 ### Now free to run summaries including hospitalizations
+
+# Get information from models related to numbers
+avg_mod <- read_rds(paste0("Colquitt_and_surrounding/Models/avg_model_", 
+                           latest_date, ".rds"))
+avg_chg_mod <- read_rds(paste0("Colquitt_and_surrounding/Models/avg_change_model_", 
+                               latest_date, ".rds"))
+avg_bad_mod <- read_rds(paste0("Colquitt_and_surrounding/Models/avg_badchange_model_", 
+                               latest_date, ".rds"))
+# Get dates on 4-24-20 and every week thereafter
+for (i in seq.int(0, 6, 1)) {
+  print(return_valstats(avg_mod, "C", as.Date("2020-04-20") + (i * 7)))
+}
+
+for (i in seq.int(0, 6, 1)) {
+  print(return_valstats(avg_chg_mod, "C", as.Date("2020-04-20") + (i * 7)))
+}
+
+for (i in seq.int(0, 6, 1)) {
+  print(return_valstats(avg_bad_mod, "C", as.Date("2020-04-20") + (i * 7)))
+}
+
