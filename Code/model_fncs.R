@@ -346,7 +346,7 @@ plot.model.acc.old <- function(data, accdata.date, accdata.cases, log='y',
 }
 
 plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
-                           max.y = NA, meanonly = FALSE, trim.days = 0,
+                           max.y = 1e4, meanonly = FALSE, trim.days = 0,
                            include.lines = c("C", "Iso", "Inf", "L")) {
   # The function `plot.model` provides automated visualization of model simulations
   # ACC specific in terms of real data
@@ -450,8 +450,8 @@ plot.model.acc <- function(data, accdata.date, accdata.cases, log='y', title='',
                                          seq.int(0, max.time - trim.days, 5),
                                        format = '%b %d')) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    scale_y_continuous(trans = "log2", limits = c(1, 1e4),
-                       breaks = c(1e1, 1e2, 1e3, 1e4))
+    scale_y_continuous(trans = "log2", limits = c(1, max.y),
+                       breaks = (10 ^ seq.int(1, floor(log10(max.y)), 1)))
 
   # axis(1, at=seq(0,max.time,5), 
   #      labels=format(attr(data, "start_date")+seq(0,max.time,5), 
@@ -585,7 +585,7 @@ return_maxvals <- function(data) {
 }
 
 return_valstats <- function(mod, column, date.val) {
-  
+
   params <- attr(mod, "params")
   iter_num <- (as.numeric(date.val - attr(mod, "start_date")) + 1) / params$dt
   tmp.vec <- c()

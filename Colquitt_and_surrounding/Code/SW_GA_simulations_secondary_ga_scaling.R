@@ -156,7 +156,7 @@ beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "bet
   ifelse(t<=w, beta0, beta0 / beta.factor)
 } 
 
-start = as.Date("2020-03-14")
+start <- as.Date("2020-03-14")
 s <- scenarios[,3:31]
 i <- scen_row
 outBaselineInt <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3], b=s[i,4], a0=s[i,5], w=s[i,6], presymptomatic=s[i,8], c=s[i,7], dt=0.05),
@@ -166,8 +166,8 @@ outBaselineInt <- evaluate.model(params=list(beta0=s[i,1], sigma=s[i,2], z=s[i,3
                        nsims=15, nstep=NULL, start=start)
 
 
-date_vec <- dailyCases2$date[1:which(dailyCases$date == as.Date("2020-04-28"))]
-cum_vec <- dailyCases2$secondary_cum[1:which(dailyCases$date == as.Date("2020-04-28"))]
+date_vec <- datatwo$date
+cum_vec <- datatwo$total
 plot.model.acc(outBaselineInt, date_vec, cum_vec,
                log='y', title='Natural Epidemic (No Social Distancing)')
 
@@ -262,7 +262,7 @@ write_rds(outSDearly, paste0("Colquitt_and_surrounding/Models/", "avg_model_", S
 
 # With a change
 beta <- function(t, w = scenarios[scen_row, "w"], beta0=scenarios[scen_row, "beta0"], beta.factor=3, 
-                 beta.factor2=1.5, w2=41) {
+                 beta.factor2=2, w2=41) {
   ifelse(t<=w, beta0, ifelse(t>w2, beta0 / beta.factor2, beta0 / beta.factor))
 } 
 
